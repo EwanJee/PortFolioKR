@@ -27,6 +27,31 @@ describe('FilterTabs', () => {
     expect(row.dataset.more).toBe('left');
   });
 
+  it('세로 휠을 탭 줄의 가로 이동으로 바꾸고, 줄 단위 휠(Firefox)도 픽셀로 환산한다', () => {
+    const { container } = render(<FilterTabs options={options} value="a" onChange={() => {}} label="거르기" />);
+    const row = container.querySelector('.filters') as HTMLElement;
+    scrollState(row, { scrollWidth: 500, clientWidth: 300, scrollLeft: 0 });
+    const pixel = new WheelEvent('wheel', { deltaY: 40, cancelable: true });
+    row.dispatchEvent(pixel);
+    expect(row.scrollLeft).toBe(40);
+    expect(pixel.defaultPrevented).toBe(true);
+    const line = new WheelEvent('wheel', { deltaY: 3, deltaMode: WheelEvent.DOM_DELTA_LINE, cancelable: true });
+    row.dispatchEvent(line);
+    expect(row.scrollLeft).toBe(40 + 3 * 16);
+  });
+
+  it('끝에 닿았거나 가로 밀기면 휠을 막지 않아 페이지가 움직인다', () => {
+    const { container } = render(<FilterTabs options={options} value="a" onChange={() => {}} label="거르기" />);
+    const row = container.querySelector('.filters') as HTMLElement;
+    scrollState(row, { scrollWidth: 500, clientWidth: 300, scrollLeft: 200 });
+    const atEnd = new WheelEvent('wheel', { deltaY: 40, cancelable: true });
+    row.dispatchEvent(atEnd);
+    expect(atEnd.defaultPrevented).toBe(false);
+    const sideways = new WheelEvent('wheel', { deltaX: -30, deltaY: 5, cancelable: true });
+    row.dispatchEvent(sideways);
+    expect(sideways.defaultPrevented).toBe(false);
+  });
+
   it('탭이 모두 보이면 data-more를 두지 않는다', () => {
     const { container } = render(<FilterTabs options={options} value="a" onChange={() => {}} label="거르기" />);
     const row = container.querySelector('.filters') as HTMLElement;

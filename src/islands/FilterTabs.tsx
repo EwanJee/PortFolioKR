@@ -8,6 +8,7 @@ type Props<T extends string> = { options: Option<T>[]; value: T; onChange: (valu
 
 // 눌린 탭이 탭 줄 밖에 있으면 탭 줄만 옆으로 옮긴다(페이지는 세로로 움직이지 않는다).
 const EDGE = 24;
+const LINE_PX = 16;
 
 export default function FilterTabs<T extends string>({ options, value, onChange, label }: Props<T>) {
   const row = useRef<HTMLDivElement>(null);
@@ -50,7 +51,9 @@ export default function FilterTabs<T extends string>({ options, value, onChange,
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
       if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
-      const next = Math.min(el.scrollWidth - el.clientWidth, Math.max(0, el.scrollLeft + e.deltaY));
+      // 휠 값은 픽셀, 줄(Firefox 마우스 휠), 페이지 단위로 올 수 있다. 줄은 16px, 페이지는 탭 줄 폭으로 환산한다.
+      const unit = e.deltaMode === WheelEvent.DOM_DELTA_LINE ? LINE_PX : e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? el.clientWidth : 1;
+      const next = Math.min(el.scrollWidth - el.clientWidth, Math.max(0, el.scrollLeft + e.deltaY * unit));
       if (Math.abs(next - el.scrollLeft) < 1) return;
       e.preventDefault();
       el.scrollLeft = next;
