@@ -1,13 +1,15 @@
 name: Deploy
 
 on:
+  push:
+    branches: [master, renewal]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -15,18 +17,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Stage static site
-        run: bash scripts/stage-static-site.sh _site
-      - name: Check staged site
-        run: bash tests/stage-static-site.test.sh
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Leak check (source)
+        run: npm run leak
+        env:
+          LEAK_DENYLIST: ${{ secrets.LEAK_DENYLIST }}
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+      - name: Leak check (dist)
+        run: npm run leak:dist
+        env:
+          LEAK_DENYLIST: ${{ secrets.LEAK_DENYLIST }}
+      - run: npm run links
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: _site
+          path: dist
 
   deploy:
+    if: github.ref == 'refs/heads/master'
     needs: build
     runs-on: ubuntu-latest
-    # 배포 권한은 배포 잡에만 준다.
+    # 배포 권한은 배포 잡에만 준다(빌드 잡은 외부 패키지 코드를 실행한다).
     permissions:
       pages: write
       id-token: write
