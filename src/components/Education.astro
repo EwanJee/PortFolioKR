@@ -1,0 +1,8 @@
+---
+import { education } from '../data/career';
+---
+<ul class="edu">
+  {education.map((e) => (
+    <li><span class="tl-date">{e.period}</span> {e.title}{e.sub && <span class="muted">, {e.sub}</span>}</li>
+  ))}
+</ul>

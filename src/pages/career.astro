@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import CareerTimeline from '../components/CareerTimeline.astro';
+import Education from '../components/Education.astro';
+---
+<BaseLayout title="Career | 지예환" description="무신사: Purchase 팀, Retention 팀, Global 팀과 이전 회사에서 한 일" ogImage="/open-graph/career.png">
+  <SectionLabel text="CAREER" level={1} />
+  <CareerTimeline />
+  <SectionLabel text="EDUCATION" />
+  <Education />
+</BaseLayout>

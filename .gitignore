@@ -1,2 +1,11 @@
 .idea
+.omc/
+.superpowers/
+.leak-denylist
 _site/
+node_modules/
+dist/
+.astro/
+test-results/
+playwright-report/
+.DS_Store

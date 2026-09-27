@@ -1,0 +1,39 @@
+---
+import { NAV, isCurrent } from '../lib/nav';
+import { profile } from '../data/profile';
+import SocialLinks from './SocialLinks.astro';
+
+interface Props {
+  variant: 'hero' | 'bar';
+}
+
+const { variant } = Astro.props;
+const path = Astro.url.pathname;
+---
+{variant === 'hero' ? (
+  <header class="hero">
+    <h1 class="hero-name" transition:name="site-name">{profile.nameKo}<small>{profile.nameEn}</small></h1>
+    <slot name="typed" />
+    <p class="hero-intro">{profile.intro}</p>
+    <nav class="site-nav" aria-label="주 메뉴" transition:name="site-nav">
+      <ul>
+        {NAV.map((item) => (
+          <li><a href={item.href} aria-current={isCurrent(item.href, path) ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <SocialLinks />
+    <p class="hero-work">{profile.workStyle}</p>
+  </header>
+) : (
+  <header class="bar">
+    <a class="bar-name" href="/" transition:name="site-name">{profile.nameKo}<small>{profile.nameEn}</small></a>
+    <nav class="site-nav" aria-label="주 메뉴" transition:name="site-nav">
+      <ul>
+        {NAV.map((item) => (
+          <li><a href={item.href} aria-current={isCurrent(item.href, path) ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </header>
+)}

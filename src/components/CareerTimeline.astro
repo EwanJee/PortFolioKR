@@ -1,0 +1,29 @@
+---
+import SegmentText from './SegmentText.astro';
+import { career } from '../data/career';
+
+const dotColor = (team: string) => (team === 'other' ? 'var(--team-other)' : `var(--team-${team})`);
+---
+<ol class="timeline">
+  {career.map((e, i) => (
+    <li class={e.small ? 'tl-row tl-row--small' : 'tl-row'} style={`--i:${i}`}>
+      <p class="tl-date">{e.period}</p>
+      <span class="tl-dot" style={`background:${dotColor(e.team)}`} aria-hidden="true"></span>
+      <div class="tl-body">
+        <h2>{e.link ? <a href={e.link}>{e.title}</a> : e.title}{e.sub && <span>{e.sub}</span>}</h2>
+        <ul>
+          {e.bullets.map((b) => (
+            <li>
+              <span class="tl-project">{b.project}</span>: <SegmentText parts={b.parts} />
+              {b.details && (
+                <ul class="tl-details">
+                  {b.details.map((d) => <li><span class="tl-detail-label">{d.label}</span>: <SegmentText parts={d.parts} /></li>)}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </li>
+  ))}
+</ol>

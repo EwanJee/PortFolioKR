@@ -1,0 +1,58 @@
+---
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage: string;
+}
+
+const { title, description, ogImage } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogUrl = new URL(ogImage, Astro.site);
+---
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="theme-color" content="#010e1b" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogUrl} />
+<meta name="twitter:card" content="summary_large_image" />
+{/*
+  한글 글꼴 파일(한 페이지에 수백 KB)이 첫 화면 그리기와 겨루지 않도록, 페이지를 다 받고 250ms 뒤에 켠다.
+  가장 큰 요소(카드 이미지, 사례 이미지)는 등장 효과 때문에 첫 그리기보다 한두 프레임 늦게 나오므로 그보다 넉넉히 뒤로 둔다.
+  한 번 켠 기기는 파일이 브라우저에 남아 있으므로 다음에 열 때 처음부터 켠다.
+  스크립트가 없으면 html에 js가 붙지 않아 CSS가 처음부터 한글 글꼴을 쓴다(tokens.css).
+  화면 전환(ClientRouter)은 html의 class를 새 페이지 것으로 바꾸므로, 바꾼 직후 다시 붙인다.
+*/}
+<script is:inline>
+  (() => {
+    if (window.fontsBoot) return;
+    window.fontsBoot = true;
+    const KEY = 'fonts-ready';
+    const root = document.documentElement;
+    root.classList.add('js');
+    let ready = false;
+    try { ready = localStorage.getItem(KEY) === '1'; } catch {}
+    const apply = () => root.classList.add(KEY);
+    const enable = () => {
+      ready = true;
+      apply();
+      try { localStorage.setItem(KEY, '1'); } catch {}
+    };
+    if (ready) apply();
+    else addEventListener('load', () => setTimeout(enable, 250), { once: true });
+    document.addEventListener('astro:after-swap', () => {
+      root.classList.add('js');
+      if (ready) apply();
+    });
+  })();
+</script>
+{/* View Transitions를 지원하지 않는 브라우저는 애니메이션 없이 페이지만 바꾼다(설계 4장). */}
+<ClientRouter fallback="none" />

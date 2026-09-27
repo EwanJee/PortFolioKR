@@ -1,0 +1,34 @@
+---
+import type { InferGetStaticPropsType } from 'astro';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CaseHero from '../../components/CaseHero.astro';
+import { inContentLang, slugOf } from '../../lib/i18n';
+
+export async function getStaticPaths() {
+  const entries = (await getCollection('projects', inContentLang)).sort((a, b) => a.data.order - b.data.order);
+  return entries.map((entry, i) => ({
+    params: { slug: slugOf(entry.id) },
+    props: { entry, prev: entries[i - 1] ?? null, next: entries[i + 1] ?? null },
+  }));
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { entry, prev, next } = Astro.props as Props;
+const slug = slugOf(entry.id);
+const { Content } = await render(entry);
+---
+<BaseLayout title={`${entry.data.title} | 지예환`} description={entry.data.summary} ogImage={`/open-graph/projects/${slug}.png`} motion="fade">
+  {/* 세부 화면에서 목록으로 돌아가는 링크(사용자 지시). 화살표는 화면 낭독기에 읽히지 않게 숨긴다. */}
+  <a class="back-link" href="/projects/"><span aria-hidden="true">←</span> 프로젝트 목록</a>
+  <CaseHero entry={entry} slug={slug} />
+  <article class="case-body prose"><Content /></article>
+  <footer class="case-foot">
+    <ul class="chips" aria-label="쓴 기술">{entry.data.stack.map((s) => <li>{s}</li>)}</ul>
+    <nav class="case-nav" aria-label="다른 사례">
+      {prev && <a href={`/projects/${slugOf(prev.id)}/`}>이전: {prev.data.title}</a>}
+      <a href="/projects/">목록</a>
+      {next && <a href={`/projects/${slugOf(next.id)}/`}>다음: {next.data.title}</a>}
+    </nav>
+  </footer>
+</BaseLayout>
