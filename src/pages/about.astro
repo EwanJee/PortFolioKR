@@ -1,9 +1,37 @@
 ---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionLabel from '../components/SectionLabel.astro';
+import Education from '../components/Education.astro';
+import profilePhoto from '../assets/profile.jpg';
+import { inContentLang } from '../lib/i18n';
 import { profile } from '../data/profile';
+import { skills } from '../data/skills';
+import { personalProjects } from '../data/personal-projects';
+
+const cases = await getCollection('projects', inContentLang);
+const used = new Set([...cases.flatMap((c) => c.data.stack), ...personalProjects.flatMap((p) => p.stack)]);
 ---
 <BaseLayout title="About | 지예환" description={profile.intro} ogImage="/open-graph/about.png">
   <SectionLabel text="ABOUT" level={1} />
-  <p class="prose">{profile.about}</p>
+  <div class="about">
+    <Image src={profilePhoto} alt="지예환 프로필 사진" width={320} class="about-photo" />
+    <div class="prose">
+      <p>{profile.about}</p>
+      <p>{profile.workStyle}</p>
+      <p><a href={profile.links.blog} target="_blank" rel="noopener noreferrer">기술 블로그</a></p>
+    </div>
+  </div>
+  <SectionLabel text="SKILLS" />
+  {skills.map((g) => (
+    <section class="skill-group">
+      <h3>{g.name}</h3>
+      <ul class="chips">
+        {g.items.map((s) => (used.has(s) ? <li><a href={`/projects/?stack=${encodeURIComponent(s)}`}>{s}</a></li> : <li>{s}</li>))}
+      </ul>
+    </section>
+  ))}
+  <SectionLabel text="EDUCATION" />
+  <Education />
 </BaseLayout>

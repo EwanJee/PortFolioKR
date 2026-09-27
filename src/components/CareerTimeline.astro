@@ -1,0 +1,22 @@
+---
+import CountUp from '../islands/CountUp';
+import { career } from '../data/career';
+
+const dotColor = (team: string) => (team === 'other' ? 'var(--team-other)' : `var(--team-${team})`);
+---
+<ol class="timeline">
+  {career.map((e, i) => (
+    <li class={e.small ? 'tl-row tl-row--small' : 'tl-row'} style={`--i:${i}`}>
+      <p class="tl-date">{e.period}</p>
+      <span class="tl-dot" style={`background:${dotColor(e.team)}`} aria-hidden="true"></span>
+      <div class="tl-body">
+        <h2>{e.title}{e.sub && <span>{e.sub}</span>}</h2>
+        <ul>
+          {e.bullets.map((b) => (
+            <li>{b.parts.map((p) => (typeof p === 'string' ? p : <CountUp client:visible to={p.count} />))}</li>
+          ))}
+        </ul>
+      </div>
+    </li>
+  ))}
+</ol>

@@ -154,3 +154,48 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .case-body h2 { font-size: 20px; margin: 36px 0 10px; }
 .case-foot { margin-top: 48px; border-top: 1px solid rgba(255, 255, 255, 0.12); padding-top: 20px; }
 .case-nav { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 16px; font-size: 14px; }
+
+/* 경력 */
+.timeline { list-style: none; padding: 0; margin: 0 0 40px; position: relative; }
+.timeline::before { content: ''; position: absolute; left: 166px; top: 8px; bottom: 8px; width: 2px; background: rgba(18, 214, 64, 0.35); transform-origin: top; animation: draw-y 0.8s ease-out 0.35s both; }
+@keyframes draw-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.tl-row { display: grid; grid-template-columns: 150px 34px minmax(0, 1fr); padding: 8px 0; animation: rise 0.4s ease both; animation-delay: calc(0.45s + var(--i, 0) * 0.15s); }
+.tl-date { text-align: right; font-size: 14px; color: var(--text-muted); margin: 3px 0 0; font-variant-numeric: tabular-nums; }
+.tl-dot { width: 12px; height: 12px; border-radius: 50%; margin: 9px auto 0; position: relative; z-index: 1; border: 2px solid var(--bg); }
+.tl-body h2 { font-size: 18px; color: var(--accent); margin: 0; font-weight: 600; }
+.tl-body h2 span { color: var(--text-faint); font-weight: 400; font-size: 14px; margin-left: 8px; }
+.tl-body ul { margin: 6px 0 0; padding-left: 18px; font-size: 16px; line-height: 1.7; max-width: var(--measure); }
+.tl-row--small .tl-body h2 { color: var(--text); font-size: 16px; }
+.num { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
+.edu { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; font-size: 16px; }
+.edu .tl-date { display: inline-block; width: 150px; text-align: left; margin: 0; }
+@media (max-width: 720px) {
+  .timeline::before { left: 7px; }
+  .tl-row { grid-template-columns: 16px minmax(0, 1fr); column-gap: 10px; }
+  .tl-dot { grid-row: 1; grid-column: 1; margin: 7px 0 0; }
+  .tl-date { grid-row: 1; grid-column: 2; text-align: left; margin: 0; }
+  .tl-body { grid-row: 2; grid-column: 2; }
+  .edu .tl-date { display: block; width: auto; }
+}
+
+/* 소개 */
+.about { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 32px; margin-bottom: 40px; }
+@media (max-width: 720px) { .about { grid-template-columns: 1fr; } }
+.about-photo { border-radius: 6px; }
+.skill-group h3 { font-size: 15px; margin: 18px 0 0; }
+
+/* 트러블슈팅 */
+.troubles { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+.trouble { background: var(--panel); border-radius: 6px; padding: 16px 18px; scroll-margin-top: 90px; }
+.trouble:target { outline: 1px solid var(--accent); }
+.trouble h2 { font-size: 18px; margin: 6px 0 0; }
+.trouble p { margin: 6px 0 0; font-size: 16px; color: var(--text-muted); max-width: var(--measure); }
+.trouble details { margin-top: 10px; }
+.trouble summary { cursor: pointer; font-size: 14px; color: var(--accent); }
+.trouble dl { margin: 10px 0 0; display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 6px 12px; font-size: 16px; max-width: var(--measure); }
+.trouble dt { color: var(--text-faint); }
+.trouble dd { margin: 0; }
+
+/* 연락처 */
+.contact-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; font-size: 16px; }
+.contact-list span { display: inline-block; width: 90px; color: var(--text-faint); }
