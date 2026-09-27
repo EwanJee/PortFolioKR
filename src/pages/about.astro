@@ -9,6 +9,7 @@ import { inContentLang } from '../lib/i18n';
 import { profile } from '../data/profile';
 import { skills } from '../data/skills';
 import { personalProjects } from '../data/personal-projects';
+import { currentCareer } from '../data/career';
 
 const cases = await getCollection('projects', inContentLang);
 const used = new Set([...cases.flatMap((c) => c.data.stack), ...personalProjects.flatMap((p) => p.stack)]);
@@ -23,6 +24,10 @@ const used = new Set([...cases.flatMap((c) => c.data.stack), ...personalProjects
       <p><a href={profile.links.blog} target="_blank" rel="noopener noreferrer">기술 블로그</a></p>
     </div>
   </div>
+  <SectionLabel text="CURRENT CAREER" />
+  <ul class="edu current-career">
+    <li><span class="tl-date">{currentCareer.period}</span> {currentCareer.title}<span class="muted">, {currentCareer.sub}</span></li>
+  </ul>
   <SectionLabel text="SKILLS" />
   {skills.map((g) => (
     <section class="skill-group">

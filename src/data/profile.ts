@@ -11,7 +11,8 @@ export const profile = {
   links: {
     email: 'ewancareer@gmail.com',
     github: 'https://github.com/EwanJee',
-    linkedin: 'https://www.linkedin.com/in/ewan-jee-191854242/',
+    // 예전 주소(ewan-jee-191854242)는 404가 나서 사용자가 준 주소로 바꿨다(2026-09-27).
+    linkedin: 'https://www.linkedin.com/in/%EC%98%88%ED%99%98-%EC%A7%80-191854242',
     blog: 'https://ewanjee.tistory.com',
   },
 } as const;

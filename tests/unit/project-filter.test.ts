@@ -1,20 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import { isDimmed, readStackParam, type GridItem } from '../../src/lib/project-filter';
+import { isHidden, readStackParam, type GridItem } from '../../src/lib/project-filter';
 
 const caseItem: GridItem = { kind: 'case', slug: 'a', title: 'A', summary: '', team: 'retention', status: 'done', stack: ['Kotlin'], alt: '' };
 const personal: GridItem = { kind: 'personal', slug: 'p', title: 'P', summary: '', period: '2025', stack: ['RabbitMQ'], href: 'https://github.com/EwanJee/x' };
 
-describe('isDimmed', () => {
-  it('팀 필터와 맞지 않으면 흐리게 한다', () => {
-    expect(isDimmed(caseItem, 'all', null)).toBe(false);
-    expect(isDimmed(caseItem, 'retention', null)).toBe(false);
-    expect(isDimmed(caseItem, 'global', null)).toBe(true);
-    expect(isDimmed(personal, 'personal', null)).toBe(false);
-    expect(isDimmed(personal, 'retention', null)).toBe(true);
+describe('isHidden', () => {
+  it('팀 탭과 맞지 않으면 숨긴다', () => {
+    expect(isHidden(caseItem, 'all', null)).toBe(false);
+    expect(isHidden(caseItem, 'retention', null)).toBe(false);
+    expect(isHidden(caseItem, 'global', null)).toBe(true);
+    expect(isHidden(personal, 'personal', null)).toBe(false);
+    expect(isHidden(personal, 'retention', null)).toBe(true);
   });
-  it('기술 조건과 맞지 않으면 흐리게 한다', () => {
-    expect(isDimmed(caseItem, 'all', 'Kotlin')).toBe(false);
-    expect(isDimmed(personal, 'all', 'Kotlin')).toBe(true);
+  it('기술 조건과 맞지 않으면 숨긴다', () => {
+    expect(isHidden(caseItem, 'all', 'Kotlin')).toBe(false);
+    expect(isHidden(personal, 'all', 'Kotlin')).toBe(true);
   });
 });
 

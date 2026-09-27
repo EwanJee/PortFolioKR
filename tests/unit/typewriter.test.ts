@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BACK_DELAY, finalState, humanize, OPENING_PAUSE, START_DELAY, TYPE_SPEED, typewriterSteps } from '../../src/lib/typewriter';
+import { BACK_DELAY, finalState, humanize, OPENING_PAUSE, TYPE_SPEED, typewriterSteps } from '../../src/lib/typewriter';
 
 const roles = ['a Product Engineer', 'a Backend Developer'];
 const take = (n: number, rand = () => 0) => {
@@ -15,19 +15,15 @@ describe('humanize', () => {
 });
 
 describe('typewriterSteps', () => {
-  it('지금 사이트 문구로 시작해 역할을 입력한다', () => {
-    const steps = take(18);
-    expect(steps[0]).toEqual({ state: { prefix: 'I will be A ', role: '', blinking: true }, wait: START_DELAY });
-    expect(steps[16].state).toEqual({ prefix: 'I will be A ', role: 'Server Developer', blinking: false });
-    expect(steps[17]).toEqual({ state: { prefix: 'I will be A ', role: 'Server Developer', blinking: true }, wait: OPENING_PAUSE });
+  it('처음 HTML과 같은 첫 역할에서 시작해 잠시 멈춘다', () => {
+    const steps = take(1);
+    expect(steps[0]).toEqual({ state: { prefix: 'I am ', role: 'a Product Engineer', blinking: true }, wait: OPENING_PAUSE });
   });
 
-  it('"will be A"를 지우고 "am"으로 고친 뒤 첫 역할을 입력한다', () => {
-    const steps = take(200);
-    const firstAm = steps.findIndex((s) => s.state.prefix === 'I am ');
-    expect(firstAm).toBeGreaterThan(17);
-    expect(steps[firstAm].state.role).toBe('');
-    const typed = steps.find((s) => s.state.prefix === 'I am ' && s.state.role === 'a Product Engineer' && s.state.blinking);
+  it('"I will be" 시작 문구 없이 늘 "I am"으로 역할만 지우고 입력한다', () => {
+    const steps = take(400);
+    expect(steps.every((s) => s.state.prefix === 'I am ')).toBe(true);
+    const typed = steps.find((s) => s.state.role === 'a Backend Developer' && s.state.blinking);
     expect(typed?.wait).toBe(BACK_DELAY);
     expect(steps.every((s) => s.state.blinking || s.wait >= TYPE_SPEED)).toBe(true);
   });

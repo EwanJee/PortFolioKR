@@ -2,14 +2,21 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionLabel from '../components/SectionLabel.astro';
-import TroubleCard from '../components/TroubleCard.astro';
-import { inContentLang } from '../lib/i18n';
+import TroubleList, { type TroubleItem } from '../islands/TroubleList';
+import { inContentLang, slugOf } from '../lib/i18n';
+import { troubleRows } from '../lib/trouble';
 
 const entries = (await getCollection('troubleshooting', inContentLang)).sort((a, b) => a.data.order - b.data.order);
+const items: TroubleItem[] = entries.map((e) => ({
+  slug: slugOf(e.id),
+  title: e.data.title,
+  team: e.data.team,
+  summary: e.data.summary,
+  rows: troubleRows(e.data),
+  related: e.data.related,
+}));
 ---
 <BaseLayout title="Troubleshooting | 지예환" description="장애와 오류를 찾아 고친 기록" ogImage="/open-graph/troubleshooting.png">
   <SectionLabel text="TROUBLESHOOTING" level={1} />
-  <ul class="troubles">
-    {entries.map((e) => (<li><TroubleCard entry={e} /></li>))}
-  </ul>
+  <TroubleList client:load items={items} />
 </BaseLayout>

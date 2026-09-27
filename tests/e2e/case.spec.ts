@@ -7,11 +7,23 @@ for (const slug of CASES) {
     await page.goto(`/projects/${slug}`);
     await expect(page).toHaveURL(new RegExp(`/projects/${slug}/$`));
     await expect(page.locator('.case-info h1')).toBeVisible();
-    await expect(page.locator('.case-team .status')).toBeVisible();
+    await expect(page.locator('.case-team .team')).toHaveText(/^무신사: (Global|Retention|Purchase)$/);
     await expect(page.locator('.case-media img, .case-media svg').first()).toBeVisible();
     expect(await page.locator('.case-cells li').count()).toBeLessThanOrEqual(3);
   });
 }
+
+test('사례 페이지 위쪽에 프로젝트 목록으로 돌아가는 링크가 있다', async ({ page }) => {
+  await page.goto('/projects/benefit-home/');
+  const back = page.getByRole('link', { name: '프로젝트 목록', exact: true });
+  await expect(back).toBeVisible();
+  const backBox = await back.boundingBox();
+  const heroBox = await page.locator('.case-hero').boundingBox();
+  expect(backBox && heroBox && backBox.y < heroBox.y).toBe(true);
+  await back.click();
+  await expect(page).toHaveURL(/\/projects\/$/);
+  await expect(page.locator('h1')).toHaveText('PROJECTS');
+});
 
 test('혜택홈: GIF를 재생하고 공개 주소를 새 탭으로 연다', async ({ page }) => {
   const gif = page.waitForRequest(/\/media\/benefit-home\.gif$/);

@@ -119,6 +119,71 @@ test('없는 주소는 404 안내를 보여 준다', async ({ page }) => {
   await expect(page.getByText('요청한 페이지가 없습니다.')).toBeVisible();
 });
 
+test('모바일: 메뉴, 탭, 버튼, 링크는 누르기 쉬운 크기다', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', '터치 화면 기준');
+  // [주소, 요소, 최소 높이]: 주요 조작은 44px, 글 사이의 작은 태그 링크는 WCAG 2.5.8 최소 24px.
+  const checks: [string, string, number][] = [
+    ['/about/', 'nav[aria-label="주 메뉴"] a', 44],
+    ['/', '.social a', 44],
+    ['/projects/', '.filter', 44],
+    ['/projects/?stack=Kafka', '.link-button', 44],
+    ['/troubleshooting/', '.filter', 44],
+    ['/troubleshooting/', '.trouble summary', 44],
+    ['/projects/benefit-home/', '.play-button, .back-link, .case-nav a', 44],
+    ['/projects/settlement-ledger-dedup/', '.diagram-controls button', 44],
+    ['/about/', '.chips a', 24],
+  ];
+  for (const [route, selector, min] of checks) {
+    await page.goto(route);
+    const heights = await page.locator(selector).evaluateAll((els) => els.filter((e) => e.getClientRects().length > 0).map((e) => e.getBoundingClientRect().height));
+    expect(heights.length, `${route} ${selector}`).toBeGreaterThan(0);
+    for (const h of heights) expect(h, `${route} ${selector}`).toBeGreaterThanOrEqual(min);
+  }
+});
+
+test('모바일: 경력의 팀 설명은 팀 이름 아래 줄에 따로 놓인다', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', '좁은 화면 기준');
+  await page.goto('/career/');
+  const tops = await page.locator('.tl-body h2').first().evaluate((h2) => {
+    const sub = h2.querySelector('span');
+    return { title: h2.getBoundingClientRect().top, sub: sub ? sub.getBoundingClientRect().top : -1 };
+  });
+  expect(tops.sub).toBeGreaterThan(tops.title + 10);
+});
+
+test('320px 폭에서도 주요 주소와 사례 페이지에 가로 스크롤이 없다', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  const cases = ['tokyo-popup-chatbot', 'japan-retention-mvp', 'member-privacy-api', 'benefit-home', 'alerting', 'settlement-ledger-dedup', 'first-payment-restore'];
+  for (const route of [...ROUTES, ...cases.map((slug) => `/projects/${slug}/`)]) {
+    await page.goto(route);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, route).toBeLessThanOrEqual(1);
+  }
+});
+
+test('창을 줄여도(480~1024px) 주요 주소와 사례 페이지에 가로 스크롤이 없다', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', '데스크톱 창을 줄이는 경우');
+  const cases = ['tokyo-popup-chatbot', 'japan-retention-mvp', 'member-privacy-api', 'benefit-home', 'alerting', 'settlement-ledger-dedup', 'first-payment-restore'];
+  for (const width of [480, 600, 768, 900, 1024]) {
+    await page.setViewportSize({ width, height: 800 });
+    for (const route of [...ROUTES, ...cases.map((slug) => `/projects/${slug}/`)]) {
+      await page.goto(route);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      expect(overflow, `${width}px ${route}`).toBeLessThanOrEqual(1);
+    }
+  }
+});
+
+test.describe('스크립트 꺼짐: 동작하지 않는 탭은 숨긴다', () => {
+  test.use({ javaScriptEnabled: false });
+  for (const route of ['/projects/', '/troubleshooting/']) {
+    test(route, async ({ page }) => {
+      await page.goto(route);
+      await expect(page.getByRole('button', { name: '전체' })).toHaveCount(0);
+    });
+  }
+});
+
 test('모든 주요 주소에서 가로 스크롤이 없다', async ({ page }) => {
   for (const route of ROUTES) {
     await page.goto(route);

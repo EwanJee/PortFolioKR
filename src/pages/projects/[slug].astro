@@ -19,6 +19,8 @@ const slug = slugOf(entry.id);
 const { Content } = await render(entry);
 ---
 <BaseLayout title={`${entry.data.title} | 지예환`} description={entry.data.summary} ogImage={`/open-graph/projects/${slug}.png`}>
+  {/* 세부 화면에서 목록으로 돌아가는 링크(사용자 지시). 화살표는 화면 낭독기에 읽히지 않게 숨긴다. */}
+  <a class="back-link" href="/projects/"><span aria-hidden="true">←</span> 프로젝트 목록</a>
   <CaseHero entry={entry} slug={slug} />
   <article class="case-body prose"><Content /></article>
   <footer class="case-foot">

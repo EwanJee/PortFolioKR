@@ -11,6 +11,23 @@ describe('경력', () => {
   it('모든 줄에 근거 ID가 있다', () => {
     expect(career.flatMap((c) => c.bullets).every((b) => b.evidence.length > 0)).toBe(true);
   });
+  it('모든 줄이 "프로젝트명: 설명" 형식이다(프로젝트명은 따로 두고 설명에서 되풀이하지 않는다)', () => {
+    for (const b of career.flatMap((c) => c.bullets)) {
+      expect(b.project.trim()).not.toBe('');
+      expect(b.project).not.toContain(':');
+      const first = b.parts[0];
+      expect(typeof first === 'string' && first.startsWith(b.project)).toBe(false);
+    }
+  });
+  it('도쿄 팝업 챗봇 줄 아래에 하라주쿠 팝업 재활용이 있다(사용자 확인 사실)', () => {
+    const chatbot = career.flatMap((c) => c.bullets).find((b) => b.project === '도쿄 팝업 스토어 안내 챗봇');
+    const text = (chatbot?.details ?? []).flatMap((d) => d.parts).filter((p) => typeof p === 'string').join('');
+    expect(text).toContain('하라주쿠 팝업');
+  });
+  it('경력 문장에 진행 중, 검토 중 같은 상태 표기가 없다', () => {
+    const strings = career.flatMap((c) => c.bullets.flatMap((b) => [...b.parts, ...(b.details ?? []).flatMap((d) => d.parts)])).filter((p) => typeof p === 'string');
+    expect(strings.filter((s) => /(진행|검토|리뷰) ?중/.test(s))).toEqual([]);
+  });
   it('움직이는 숫자는 모두 양수다', () => {
     const counts = career.flatMap((c) => c.bullets.flatMap((b) => b.parts.filter((p) => typeof p !== 'string')));
     expect(counts.every((p) => typeof p !== 'string' && p.count > 0)).toBe(true);
@@ -25,10 +42,11 @@ describe('기술과 개인 프로젝트', () => {
     const all = skills.flatMap((g) => g.items);
     expect(new Set(all).size).toBe(all.length);
   });
-  it('개인 프로젝트는 EwanJee GitHub 저장소로 연결된다', () => {
-    expect(personalProjects.map((p) => p.href)).toEqual([
-      'https://github.com/EwanJee/NEWJOB-Ver2.0',
-      'https://github.com/EwanJee/HealthWebApp',
+  it('개인 프로젝트는 EwanJee 저장소로, 부트캠프 팀 프로젝트는 팀 조직 GitHub로 연결된다', () => {
+    expect(personalProjects.map((p) => [p.label ?? '개인 프로젝트', p.href])).toEqual([
+      ['부트캠프 팀 프로젝트', 'https://github.com/twelevegg'],
+      ['개인 프로젝트', 'https://github.com/EwanJee/NEWJOB-Ver2.0'],
+      ['개인 프로젝트', 'https://github.com/EwanJee/HealthWebApp'],
     ]);
   });
 });

@@ -14,7 +14,7 @@ export type CaseItem = {
   diagram?: DiagramId;
   alt: string;
 };
-export type PersonalItem = { kind: 'personal'; slug: string; title: string; summary: string; period: string; stack: string[]; href: string };
+export type PersonalItem = { kind: 'personal'; slug: string; title: string; summary: string; period: string; stack: string[]; href: string; label?: string };
 export type GridItem = CaseItem | PersonalItem;
 
 export const FILTERS: { id: Filter; label: string }[] = [
@@ -22,7 +22,7 @@ export const FILTERS: { id: Filter; label: string }[] = [
   { id: 'global', label: 'Global' },
   { id: 'retention', label: 'Retention' },
   { id: 'purchase', label: 'Purchase' },
-  { id: 'personal', label: '개인' },
+  { id: 'personal', label: '개인·부트캠프' },
 ];
 
 export function matchesFilter(item: GridItem, filter: Filter): boolean {
@@ -35,7 +35,7 @@ export function matchesStack(item: GridItem, stack: string | null): boolean {
   return !stack || item.stack.includes(stack);
 }
 
-export function isDimmed(item: GridItem, filter: Filter, stack: string | null): boolean {
+export function isHidden(item: GridItem, filter: Filter, stack: string | null): boolean {
   return !matchesFilter(item, filter) || !matchesStack(item, stack);
 }
 

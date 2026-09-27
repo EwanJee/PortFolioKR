@@ -22,9 +22,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .typed-role { color: var(--accent); border-bottom: 2px solid var(--accent-dark); padding-bottom: 6px; }
 .typed-cursor { opacity: 1; }
 .typed-cursor.is-blinking { animation: typed-blink 0.7s infinite; }
-.typed[data-pending] { animation: typed-reveal 0.01s 1.5s both; }
 @keyframes typed-blink { 50% { opacity: 0; } }
-@keyframes typed-reveal { from { opacity: 0; } to { opacity: 1; } }
 @media (max-width: 720px) { .typed { font-size: 20px; } }
 .hero-intro { font-size: 17px; color: var(--text-muted); margin: 12px 0 0; }
 .hero .site-nav { margin-top: 34px; }
@@ -76,7 +74,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 /* 구조 그림 */
 .diagram { margin: 0; width: 100%; }
 .diagram svg { width: 100%; height: auto; display: block; font-family: var(--font-sans); font-size: 12px; }
-/* 등장 효과는 끝난 뒤 값을 붙잡지 않는다(backwards). 붙잡으면 is-muted, is-dim 같은 흐림이 불투명도 1에 덮인다. */
+/* 등장 효과는 끝난 뒤 값을 붙잡지 않는다(backwards). 붙잡으면 is-muted 같은 흐림이 불투명도 1에 덮인다. */
 .diagram-node { animation: node-in 0.3s ease backwards; }
 .diagram-node rect { fill: #12324f; stroke: rgba(255, 255, 255, 0.25); }
 .diagram-node text { fill: #ffffff; }
@@ -113,11 +111,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
 .filter { font: inherit; font-size: 13px; color: var(--text); background: transparent; border: 1px solid var(--accent-dark); border-radius: 4px; padding: 5px 12px; cursor: pointer; }
 .filter[aria-pressed='true'], .filter:hover { background: var(--accent-dark); }
+/* 탭은 스크립트가 있어야 동작하므로, 스크립트가 없으면 숨긴다(누를 수 없는 버튼을 보이지 않게). */
+:root:not(.js) .filters { display: none; }
 .stack-note { font-size: 14px; color: var(--text-muted); }
 .link-button { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
 .cards { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
-.card-wrap { animation: rise 0.4s ease backwards; transition: opacity 0.3s ease; }
-.card-wrap.is-dim { opacity: 0.25; }
+.card-wrap { animation: rise 0.4s ease backwards; }
 .card { display: block; position: relative; height: 100%; background: var(--panel); border: 1px solid transparent; border-radius: 6px; overflow: hidden; text-decoration: none; transition: transform 0.25s ease; }
 .card:hover { transform: translateY(-5px); border-color: var(--accent-dark); }
 .card-media { position: relative; height: 300px; background: #0c2744; display: flex; justify-content: center; align-items: flex-start; padding-top: 16px; overflow: hidden; }
@@ -148,6 +147,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .play-button { font: inherit; font-size: 13px; color: var(--text); background: var(--accent-dark); border: 0; border-radius: 4px; padding: 7px 14px; cursor: pointer; }
 /* 버튼은 처음 HTML부터 자리를 잡아 두고(살아날 때 아래 내용이 밀리지 않게), 스크립트가 없으면 숨긴다. */
 :root:not(.js) .play-button { display: none; }
+/* 세부 화면 위쪽의 목록으로 돌아가는 링크 */
+.back-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-bottom: 8px; font-size: 14px; color: var(--text-muted); text-decoration: none; }
+.back-link:hover { color: var(--accent); }
 .case-team { margin: 0; }
 .case-info h1 { font-size: 28px; margin: 6px 0 0; line-height: 1.35; }
 .case-meta { font-size: 14px; color: var(--text-faint); margin: 8px 0 0; }
@@ -173,6 +175,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .tl-body h2 span { color: var(--text-faint); font-weight: 400; font-size: 14px; margin-left: 8px; }
 .tl-body ul { margin: 6px 0 0; padding-left: 18px; font-size: 16px; line-height: 1.7; max-width: var(--measure); }
 .tl-row--small .tl-body h2 { color: var(--text); font-size: 16px; }
+.tl-project { font-weight: 600; }
+.tl-details { margin: 2px 0 6px; padding-left: 18px; font-size: 15px; color: var(--text-muted); list-style: circle; }
+.tl-detail-label { color: var(--text); }
 .num { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
 .edu { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; font-size: 16px; }
 .edu .tl-date { display: inline-block; width: 150px; text-align: left; margin: 0; }
@@ -206,3 +211,19 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 /* 연락처 */
 .contact-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; font-size: 16px; }
 .contact-list span { display: inline-block; width: 90px; color: var(--text-faint); }
+
+/* 휴대폰과 터치 화면: 누르는 요소는 높이 44px 이상, 글 사이의 작은 태그 링크는 24px 이상(WCAG 2.5.8)으로 키운다. */
+@media (max-width: 720px), (pointer: coarse) {
+  .site-nav ul { gap: 0 20px; }
+  .site-nav a { padding: 11px 0; }
+  .site-nav a::after { bottom: 6px; }
+  .social a { width: 44px; height: 44px; }
+  .filter, .play-button, .diagram-controls button { min-height: 44px; }
+  .link-button, .case-nav a { display: inline-flex; align-items: center; min-height: 44px; }
+  .trouble summary { padding: 12px 0; }
+  .chips a { display: inline-block; padding: 4px 0; }
+}
+/* 좁은 화면: 경력의 팀 설명은 팀 이름 아래 줄에 둔다(한 줄에 붙이면 어색하게 줄바꿈된다). */
+@media (max-width: 720px) {
+  .tl-body h2 span { display: block; margin: 2px 0 0; }
+}

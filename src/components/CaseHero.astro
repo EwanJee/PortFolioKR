@@ -3,7 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import { getImage } from 'astro:assets';
 import GifPlayer from '../islands/GifPlayer';
 import StepDiagram from '../islands/StepDiagram';
-import { STATUS_LABEL, TEAM_LABEL } from '../lib/teams';
+import { teamLabel } from '../lib/teams';
 
 interface Props {
   entry: CollectionEntry<'projects'>;
@@ -21,7 +21,7 @@ const still = d.media.kind === 'gif' ? await getImage({ src: d.media.still, widt
     {d.media.kind === 'diagram' && <StepDiagram client:visible id={d.media.diagram} mode="player" />}
   </div>
   <div class="case-info">
-    <p class="case-team"><span class={`team team--${d.team}`}>{TEAM_LABEL[d.team]}</span><span class="status">{STATUS_LABEL[d.status]}</span></p>
+    <p class="case-team"><span class={`team team--${d.team}`}>{teamLabel(d.team)}</span></p>
     <h1>{d.title}</h1>
     <p class="case-meta">{d.period}, {d.role}</p>
     {cells.length > 0 && (

@@ -14,11 +14,20 @@ const items: GridItem[] = [
 describe('ProjectGrid', () => {
   afterEach(() => window.history.replaceState(null, '', '/'));
 
-  it('팀 필터를 누르면 다른 팀 카드가 흐려진다', () => {
+  it('팀 탭을 누르면 그 팀 카드만 남는다', () => {
     const { container } = render(<ProjectGrid items={items} />);
     fireEvent.click(screen.getByRole('button', { name: 'Purchase' }));
     expect(screen.getByRole('button', { name: 'Purchase' }).getAttribute('aria-pressed')).toBe('true');
-    expect(container.querySelectorAll('.card-wrap.is-dim')).toHaveLength(2);
+    expect(container.querySelectorAll('.card-wrap')).toHaveLength(1);
+    expect(screen.getByRole('link', { name: /원장/ })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: '전체' }));
+    expect(container.querySelectorAll('.card-wrap')).toHaveLength(3);
+  });
+
+  it('사례 카드의 팀 표시는 "회사명: 팀명"이다', () => {
+    render(<ProjectGrid items={items} />);
+    expect(screen.getByText('무신사: Retention')).toBeTruthy();
+    expect(screen.getByText('무신사: Purchase')).toBeTruthy();
   });
 
   it('사례 카드는 사례 주소로, 개인 프로젝트는 GitHub 새 탭으로 연결한다', () => {
@@ -39,9 +48,20 @@ describe('ProjectGrid', () => {
     expect(imgs[2].getAttribute('loading')).toBe('lazy');
   });
 
-  it('제안 단계 사례에 상태를 표시한다', () => {
-    render(<ProjectGrid items={items} />);
-    expect(screen.getByText('제안·검토 중')).toBeTruthy();
+  it('앞에 그림 카드가 있어도 처음 나오는 이미지 카드 둘을 바로 받고, 그중 첫 장의 우선순위를 높인다', () => {
+    const withStill = (slug: string, src: string): GridItem => ({ kind: 'case', slug, title: slug, summary: 's', team: 'global', status: 'done', stack: [], still: { src, width: 300, height: 540 }, alt: slug });
+    const diagramCard: GridItem = { kind: 'case', slug: 'd', title: 'd', summary: 's', team: 'purchase', status: 'done', stack: [], diagram: 'race-condition', alt: 'd' };
+    const { container } = render(<ProjectGrid items={[diagramCard, withStill('a', '/a.webp'), withStill('b', '/b.webp'), withStill('c', '/c.webp')]} />);
+    const imgs = container.querySelectorAll('.card img');
+    expect(imgs[0].getAttribute('loading')).toBe('eager');
+    expect(imgs[0].getAttribute('fetchpriority')).toBe('high');
+    expect(imgs[1].getAttribute('loading')).toBe('eager');
+    expect(imgs[2].getAttribute('loading')).toBe('lazy');
+  });
+
+  it('카드에 진행 중, 검토 중 같은 상태를 표시하지 않는다(사용자 지시)', () => {
+    const { container } = render(<ProjectGrid items={items} />);
+    expect(container.textContent).not.toMatch(/(진행|검토) ?중/);
   });
 
   it('모두 보기는 주소만 바꾸고 화면 전환 기록 값은 남긴다(뒤로 가기가 동작하게)', () => {
@@ -55,15 +75,16 @@ describe('ProjectGrid', () => {
   it('사례에 없는 기술 이름은 주소에 있어도 무시한다(임의 문구를 화면에 띄우지 않는다)', () => {
     window.history.replaceState(null, '', `/projects/?stack=${encodeURIComponent('아무 문구')}`);
     const { container } = render(<ProjectGrid items={items} />);
-    expect(screen.queryByText(/사용 사례만 밝게/)).toBeNull();
-    expect(container.querySelectorAll('.card-wrap.is-dim')).toHaveLength(0);
+    expect(screen.queryByText(/사용 사례만/)).toBeNull();
+    expect(container.querySelectorAll('.card-wrap')).toHaveLength(3);
   });
 
-  it('주소의 stack 조건으로 흐리게 하고, 모두 보기로 해제한다', () => {
+  it('주소의 stack 조건에 맞는 카드만 보이고, 모두 보기로 되돌린다', () => {
     window.history.replaceState(null, '', '/projects/?stack=Java');
     const { container } = render(<ProjectGrid items={items} />);
-    expect(container.querySelectorAll('.card-wrap.is-dim')).toHaveLength(2);
+    expect(screen.getByText(/Java 사용 사례만 보여 줍니다/)).toBeTruthy();
+    expect(container.querySelectorAll('.card-wrap')).toHaveLength(1);
     fireEvent.click(screen.getByRole('button', { name: '모두 보기' }));
-    expect(container.querySelectorAll('.card-wrap.is-dim')).toHaveLength(0);
+    expect(container.querySelectorAll('.card-wrap')).toHaveLength(3);
   });
 });

@@ -1,5 +1,5 @@
 ---
-import CountUp from '../islands/CountUp';
+import SegmentText from './SegmentText.astro';
 import { career } from '../data/career';
 
 const dotColor = (team: string) => (team === 'other' ? 'var(--team-other)' : `var(--team-${team})`);
@@ -13,7 +13,14 @@ const dotColor = (team: string) => (team === 'other' ? 'var(--team-other)' : `va
         <h2>{e.title}{e.sub && <span>{e.sub}</span>}</h2>
         <ul>
           {e.bullets.map((b) => (
-            <li>{b.parts.map((p) => (typeof p === 'string' ? p : <CountUp client:visible to={p.count} />))}</li>
+            <li>
+              <span class="tl-project">{b.project}</span>: <SegmentText parts={b.parts} />
+              {b.details && (
+                <ul class="tl-details">
+                  {b.details.map((d) => <li><span class="tl-detail-label">{d.label}</span>: <SegmentText parts={d.parts} /></li>)}
+                </ul>
+              )}
+            </li>
           ))}
         </ul>
       </div>

@@ -7,9 +7,11 @@ import ProjectGrid from '../../islands/ProjectGrid';
 import { inContentLang, slugOf } from '../../lib/i18n';
 import { personalProjects } from '../../data/personal-projects';
 import type { GridItem } from '../../lib/project-filter';
+import { newestFirst } from '../../lib/period';
 
-const entries = (await getCollection('projects', inContentLang)).sort((a, b) => a.data.order - b.data.order);
-const cases: GridItem[] = await Promise.all(
+// 기간이 같으면 order가 큰(나중) 사례가 앞에 오도록, 먼저 order 역순으로 놓고 안정 정렬한다.
+const entries = (await getCollection('projects', inContentLang)).sort((a, b) => b.data.order - a.data.order);
+const cases: { period: string; item: GridItem }[] = await Promise.all(
   entries.map(async (e) => {
     const base = {
       kind: 'case' as const,
@@ -23,14 +25,16 @@ const cases: GridItem[] = await Promise.all(
     };
     if (e.data.media.kind === 'gif') {
       const img = await getImage({ src: e.data.media.still, width: 300, format: 'webp' });
-      return { ...base, still: { src: img.src, width: Number(img.attributes.width), height: Number(img.attributes.height) } };
+      return { period: e.data.period, item: { ...base, still: { src: img.src, width: Number(img.attributes.width), height: Number(img.attributes.height) } } };
     }
-    return { ...base, diagram: e.data.media.diagram };
+    return { period: e.data.period, item: { ...base, diagram: e.data.media.diagram } };
   }),
 );
-const items: GridItem[] = [...cases, ...personalProjects.map((p) => ({ kind: 'personal' as const, ...p }))];
+const personal = personalProjects.map((p) => ({ period: p.period, item: { kind: 'personal' as const, ...p } }));
+// 회사 사례와 개인·부트캠프 프로젝트를 한 줄로 섞어 시간 순, 최신이 먼저 오게 놓는다(사용자 지시).
+const items: GridItem[] = [...cases, ...personal].sort((a, b) => newestFirst(a.period, b.period)).map((x) => x.item);
 ---
-<BaseLayout title="Projects | 지예환" description="사례 7개와 개인 프로젝트" ogImage="/open-graph/projects.png">
+<BaseLayout title="Projects | 지예환" description="회사 사례 7개와 개인·부트캠프 프로젝트" ogImage="/open-graph/projects.png">
   <SectionLabel text="PROJECTS" level={1} />
   <ProjectGrid client:load items={items} />
 </BaseLayout>

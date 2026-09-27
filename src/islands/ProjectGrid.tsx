@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import FilterTabs from './FilterTabs';
 import StepDiagram from './StepDiagram';
-import { FILTERS, isDimmed, readStackParam, type CaseItem, type Filter, type GridItem, type PersonalItem } from '../lib/project-filter';
-import { STATUS_LABEL, TEAM_LABEL } from '../lib/teams';
+import { FILTERS, isHidden, readStackParam, type CaseItem, type Filter, type GridItem, type PersonalItem } from '../lib/project-filter';
+import { teamLabel } from '../lib/teams';
 
 export default function ProjectGrid({ items }: { items: GridItem[] }) {
   const [filter, setFilter] = useState<Filter>('all');
@@ -19,22 +20,23 @@ export default function ProjectGrid({ items }: { items: GridItem[] }) {
     window.history.replaceState(window.history.state, '', window.location.pathname);
   };
 
+  // 탭이나 기술 조건에 맞지 않는 카드는 숨긴다(사용자 지시).
+  const visible = items.filter((item) => !isHidden(item, filter, stack));
+  // 처음 나오는 이미지 카드 둘은 바로 받고, 그중 첫 장은 가장 큰 요소가 되므로 우선순위를 높인다(앞에 그림 카드가 와도 같다).
+  const stills = visible.filter((item) => item.kind === 'case' && item.still).map((item) => item.slug);
+
   return (
     <div className="project-grid">
-      <div className="filters" role="group" aria-label="팀으로 거르기">
-        {FILTERS.map((f) => (
-          <button key={f.id} type="button" className="filter" aria-pressed={filter === f.id} onClick={() => setFilter(f.id)}>{f.label}</button>
-        ))}
-      </div>
+      <FilterTabs options={FILTERS} value={filter} onChange={setFilter} label="팀으로 거르기" />
       {stack && (
         <p className="stack-note">
-          {`${stack} 사용 사례만 밝게 보여 줍니다. `}<button type="button" className="link-button" onClick={clearStack}>모두 보기</button>
+          {`${stack} 사용 사례만 보여 줍니다. `}<button type="button" className="link-button" onClick={clearStack}>모두 보기</button>
         </p>
       )}
       <ul className="cards">
-        {items.map((item, i) => (
-          <li key={item.slug} className={isDimmed(item, filter, stack) ? 'card-wrap is-dim' : 'card-wrap'} style={{ animationDelay: `${0.1 * i}s` }}>
-            {item.kind === 'case' ? <CaseCard item={item} index={i} /> : <PersonalCard item={item} />}
+        {visible.map((item, i) => (
+          <li key={item.slug} className="card-wrap" style={{ animationDelay: `${0.1 * i}s` }}>
+            {item.kind === 'case' ? <CaseCard item={item} imageRank={stills.indexOf(item.slug)} /> : <PersonalCard item={item} />}
           </li>
         ))}
       </ul>
@@ -42,14 +44,14 @@ export default function ProjectGrid({ items }: { items: GridItem[] }) {
   );
 }
 
-// 첫 화면에 보이는 앞쪽 카드 이미지는 바로 받고, 첫 이미지는 가장 큰 요소가 되므로 우선순위를 높인다.
-function CaseCard({ item, index }: { item: CaseItem; index: number }) {
+function CaseCard({ item, imageRank }: { item: CaseItem; imageRank: number }) {
+  const early = imageRank >= 0 && imageRank < 2;
   return (
     <a className="card" href={`/projects/${item.slug}/`}>
       <div className="card-media" data-hint="눌러서 자세히">
         {item.still ? (
           <div className="phone">
-            <img src={item.still.src} width={item.still.width} height={item.still.height} alt={item.alt} loading={index < 2 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : undefined} style={{ viewTransitionName: `media-${item.slug}` }} />
+            <img src={item.still.src} width={item.still.width} height={item.still.height} alt={item.alt} loading={early ? 'eager' : 'lazy'} fetchPriority={imageRank === 0 ? 'high' : undefined} style={{ viewTransitionName: `media-${item.slug}` }} />
           </div>
         ) : item.diagram ? (
           <div className="card-diagram" style={{ viewTransitionName: `media-${item.slug}` }}>
@@ -58,8 +60,7 @@ function CaseCard({ item, index }: { item: CaseItem; index: number }) {
         ) : null}
       </div>
       <div className="card-body">
-        <span className={`team team--${item.team}`}>{TEAM_LABEL[item.team]}</span>
-        {item.status !== 'done' && <span className="status">{STATUS_LABEL[item.status]}</span>}
+        <span className={`team team--${item.team}`}>{teamLabel(item.team)}</span>
         <h2>{item.title}</h2>
         <p>{item.summary}</p>
       </div>
@@ -71,7 +72,7 @@ function PersonalCard({ item }: { item: PersonalItem }) {
   return (
     <a className="card card--text" href={item.href} target="_blank" rel="noopener noreferrer" data-hint="GitHub에서 보기">
       <div className="card-body">
-        <span className="team">개인 프로젝트, {item.period}</span>
+        <span className="team">{item.label ?? '개인 프로젝트'}, {item.period}</span>
         <h2>{item.title}</h2>
         <p>{item.summary}</p>
         <ul className="chips">{item.stack.map((s) => <li key={s}>{s}</li>)}</ul>
