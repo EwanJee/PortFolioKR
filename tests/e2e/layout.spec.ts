@@ -5,7 +5,7 @@ const ROUTES = ['/', '/about/', '/career/', '/projects/', '/troubleshooting/', '
 test('첫 화면: 이름, 한 줄 소개, 메뉴 6개, 소셜 4개, 일하는 방식', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('h1')).toContainText('지예환');
-  await expect(page.getByText('무신사에서 주문, 클레임, 배송 도메인을 담당합니다.')).toBeVisible();
+  await expect(page.getByText('무신사에서 주문, 배송, 클레임 도메인을 담당합니다.')).toBeVisible();
   await expect(page.locator('nav[aria-label="주 메뉴"] a')).toHaveCount(6);
   const social = page.locator('.social a');
   await expect(social).toHaveCount(4);

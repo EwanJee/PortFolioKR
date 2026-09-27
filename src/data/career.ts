@@ -9,7 +9,7 @@ export const career: CareerEntry[] = [
   {
     period: '2026.09 ~ 지금',
     title: '무신사 Purchase 팀',
-    sub: '주문, 클레임, 배송',
+    sub: '주문, 배송, 클레임',
     team: 'purchase',
     bullets: [
       { parts: ['클레임: 첫 결제 혜택 자격 복원 (설계와 개발, 진행 중)'], evidence: ['E-restore'] },
