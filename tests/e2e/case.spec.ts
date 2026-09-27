@@ -28,6 +28,13 @@ test('사례 본문: 모든 사례에 기록과 자동화가 있고, 요청한 �
   await expect(body.locator('h2', { hasText: '배운 점' })).toHaveCount(1);
 });
 
+test('알림 사례는 사내 서비스 이름 대신 "리텐션 서비스 3개"로 적는다', async ({ page }) => {
+  await page.goto('/projects/alerting/');
+  const body = page.locator('main');
+  await expect(body).toContainText('리텐션 서비스 3개');
+  for (const name of ['체험단', '래플', '온보딩']) await expect(body).not.toContainText(name);
+});
+
 test('사례 페이지 위쪽에 프로젝트 목록으로 돌아가는 링크가 있다', async ({ page }) => {
   await page.goto('/projects/benefit-home/');
   const back = page.getByRole('link', { name: '프로젝트 목록', exact: true });

@@ -16,8 +16,8 @@ const cases = await getCollection('projects', inContentLang);
 const pages: Record<string, OgPage> = {
   index: { title: `${profile.nameKo} ${profile.nameEn}`, description: profile.intro, color: ACCENT },
   about: { title: 'About', description: profile.intro, color: ACCENT },
-  career: { title: 'Career', description: 'Global, Retention, Purchase 팀에서 한 일', color: ACCENT },
-  projects: { title: 'Projects', description: '사례 7개와 개인 프로젝트', color: ACCENT },
+  career: { title: 'Career', description: '무신사: Purchase 팀, Retention 팀, Global 팀과 이전 회사에서 한 일', color: ACCENT },
+  projects: { title: 'Projects', description: '무신사 사례 8개와 이전 회사, 개인·부트캠프 프로젝트', color: ACCENT },
   troubleshooting: { title: 'Troubleshooting', description: '장애와 오류를 찾아 고친 기록', color: ACCENT },
   contact: { title: 'Contact', description: '이메일, GitHub, LinkedIn, 블로그로 연락할 수 있습니다.', color: ACCENT },
   ...Object.fromEntries(

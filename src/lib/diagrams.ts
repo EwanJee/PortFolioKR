@@ -198,7 +198,7 @@ export const DIAGRAMS: Record<DiagramId, DiagramSpec> = {
       { id: 'cmp', label: '응답 비교 불일치 4 → 0', x: 10, y: 176, w: 165, h: 30 },
       { id: 'dash', label: '대시보드 2개, 52패널', x: 185, y: 176, w: 165, h: 30 },
       { id: 'ratio', label: '10 → 30 → 70 → 100%', x: 10, y: 222, w: 165, h: 30 },
-      { id: 'probe', label: '준비 확인 15초 → 35초', x: 185, y: 222, w: 165, h: 30 },
+      { id: 'probe', label: '준비 시점 15초 → 35초', x: 185, y: 222, w: 165, h: 30 },
     ],
     edges: [
       { from: 'client', to: 'old' },

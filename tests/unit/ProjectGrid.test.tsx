@@ -111,4 +111,12 @@ describe('ProjectGrid', () => {
     fireEvent.click(screen.getByRole('button', { name: '모두 보기' }));
     expect(container.querySelectorAll('.card-wrap')).toHaveLength(3);
   });
+
+  it('기술 조건과 탭이 겹쳐 보일 카드가 없으면 그렇다고 알린다', () => {
+    window.history.replaceState(null, '', '/projects/?stack=Java');
+    const { container } = render(<ProjectGrid items={items} />);
+    fireEvent.click(screen.getByRole('button', { name: '무신사: Retention 팀' }));
+    expect(container.querySelectorAll('.card-wrap')).toHaveLength(0);
+    expect(screen.getByText('이 조건에 맞는 프로젝트가 없습니다.')).toBeTruthy();
+  });
 });

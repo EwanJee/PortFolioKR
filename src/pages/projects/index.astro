@@ -34,7 +34,7 @@ const personal = personalProjects.map((p) => ({ period: p.period, item: { kind: 
 // 회사 사례와 개인·부트캠프 프로젝트를 한 줄로 섞어 시간 순, 최신이 먼저 오게 놓는다(사용자 지시).
 const items: GridItem[] = [...cases, ...personal].sort((a, b) => newestFirst(a.period, b.period)).map((x) => x.item);
 ---
-<BaseLayout title="Projects | 지예환" description="회사 사례 7개와 개인·부트캠프 프로젝트" ogImage="/open-graph/projects.png">
+<BaseLayout title="Projects | 지예환" description="무신사 사례 8개와 이전 회사, 개인·부트캠프 프로젝트" ogImage="/open-graph/projects.png">
   <SectionLabel text="PROJECTS" level={1} />
   <ProjectGrid client:load items={items} />
 </BaseLayout>

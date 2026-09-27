@@ -121,10 +121,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .filter[aria-pressed='true'], .filter:hover { background: var(--accent-dark); }
 /* 탭은 스크립트가 있어야 동작하므로, 스크립트가 없으면 숨긴다(누를 수 없는 버튼을 보이지 않게). */
 :root:not(.js) .filters { display: none; }
-.stack-note { font-size: 14px; color: var(--text-muted); }
+.stack-note, .empty-note { font-size: 14px; color: var(--text-muted); }
 .link-button { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
 .cards { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
 .card-wrap { animation: rise 0.4s ease backwards; }
+/* 탭을 누른 뒤 다시 나타나는 카드는 움직임 없이 바로 보인다(등장 움직임은 처음 한 번만). */
+.cards--settled .card-wrap { animation: none; }
 .card { display: block; position: relative; height: 100%; background: var(--panel); border: 1px solid transparent; border-radius: 6px; overflow: hidden; text-decoration: none; transition: transform 0.25s ease; }
 .card:hover { transform: translateY(-5px); border-color: var(--accent-dark); }
 /* 누를 수 없는 글자 카드(공개 링크가 없는 회사 프로젝트)는 떠오르지 않는다. */
@@ -132,6 +134,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .card-media { position: relative; height: 300px; background: #0c2744; display: flex; justify-content: center; align-items: flex-start; padding-top: 16px; overflow: hidden; }
 .card-media::after, .card--text::after { content: attr(data-hint); position: absolute; right: 8px; bottom: 8px; font-size: 11px; padding: 3px 7px; border-radius: 3px; background: rgba(1, 14, 27, 0.8); color: var(--accent); opacity: 0; transition: opacity 0.2s; }
 .card:hover .card-media::after, .card--text:hover::after { opacity: 1; }
+/* 링크가 없는 카드에는 안내 문구가 없으므로 빈 안내 상자도 그리지 않는다(위 규칙보다 뒤에 두고 더 구체적으로). */
+.card--text.card--static::after { content: none; }
 .card-media:has(.card-diagram) { align-items: center; padding-top: 0; }
 .card-diagram { width: 100%; padding: 8px 12px; }
 .phone { width: 150px; height: 272px; border-radius: 18px; overflow: hidden; border: 5px solid #1e3550; background: #000; }
@@ -233,7 +237,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
   .site-nav a::after { bottom: 6px; }
   .social a { width: 44px; height: 44px; }
   .filter, .play-button, .diagram-controls button { min-height: 44px; }
-  .link-button, .case-nav a { display: inline-flex; align-items: center; min-height: 44px; }
+  .link-button, .case-nav a, .case-link, .tl-body h2 a, .trouble-related a, .contact-list a { display: inline-flex; align-items: center; min-height: 44px; }
+  .bar-name { display: inline-block; padding: 2px 0; }
+  /* 마우스가 없으면 올렸을 때 밑줄이 보이지 않으므로, 경력의 팀 제목 링크는 처음부터 밑줄을 둔다. */
+  .tl-body h2 a { text-decoration: underline; text-decoration-color: var(--accent-dark); text-underline-offset: 5px; }
   .trouble summary { padding: 12px 0; }
   .chips a { display: inline-block; padding: 4px 0; }
 }

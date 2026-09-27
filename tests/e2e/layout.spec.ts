@@ -139,6 +139,11 @@ test('모바일: 메뉴, 탭, 버튼, 링크는 누르기 쉬운 크기다', asy
     ['/projects/benefit-home/', '.play-button, .back-link, .case-nav a', 44],
     ['/projects/settlement-ledger-dedup/', '.diagram-controls button', 44],
     ['/about/', '.chips a', 24],
+    ['/career/', '.tl-body h2 a', 44],
+    ['/troubleshooting/', '.trouble-related a', 44],
+    ['/contact/', '.contact-list a', 44],
+    ['/projects/benefit-home/', '.case-link', 44],
+    ['/about/', '.bar-name', 44],
   ];
   for (const [route, selector, min] of checks) {
     await page.goto(route);
@@ -195,6 +200,13 @@ test('모바일: 주소로 연 탭은 탭 줄 안의 보이는 자리로 옮겨 
       return Boolean(b && c && b.x >= c.x - 1 && b.x + b.width <= c.x + c.width + 1);
     })
     .toBe(true);
+});
+
+test('모바일: 경력의 팀 제목은 마우스 없이도 링크로 보이게 밑줄을 둔다', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', '터치 화면 기준');
+  await page.goto('/career/');
+  const line = await page.locator('.tl-body h2 a').first().evaluate((a) => getComputedStyle(a).textDecorationLine);
+  expect(line).toContain('underline');
 });
 
 test('모바일: 경력의 팀 설명은 팀 이름 아래 줄에 따로 놓인다', async ({ page }, testInfo) => {

@@ -22,7 +22,7 @@ export const career: CareerEntry[] = [
         parts: ['원인 추적 후 대안 ', { count: 7 }, '개를 가중 결정표로 비교해 ADR로 해결안 제안'],
         evidence: ['E-ledger-matrix'],
         details: [
-          { label: '원인', parts: ['두 서비스의 서로 다른 잠금과 커밋 전에 보낸 이벤트를 4일 치 로그로 확인'], evidence: ['E-ledger-cause', 'E-ledger-research'] },
+          { label: '원인', parts: ['두 서비스가 서로 다른 잠금으로 같은 행을 넣은 기록을 4일 치 로그에서 수십 건 찾고, 커밋 전에 이벤트를 보내는 경로도 찾음'], evidence: ['E-ledger-cause', 'E-ledger-research'] },
           { label: '검증', parts: ['가중치를 5%p씩 흔든 141가지 조합에서도 1위가 바뀌지 않음을 확인'], evidence: ['E-ledger-matrix'] },
           { label: '문서화', parts: ['ADR 2건과 민감도 분석을 담은 결정표 문서, 값 통일부터 과거 데이터 정리까지의 실행 순서를 남김'], evidence: ['E-ledger-research'] },
         ],

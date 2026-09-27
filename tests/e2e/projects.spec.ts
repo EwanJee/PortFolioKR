@@ -112,3 +112,20 @@ test('키보드로 필터 버튼과 카드에 닿는다', async ({ page }) => {
   expect(reached.some((c) => c.split(' ').includes('filter'))).toBe(true);
   expect(reached.some((c) => c.split(' ').includes('card'))).toBe(true);
 });
+
+test('탭을 바꿔도 카드 등장 움직임을 다시 재생하지 않는다', async ({ page }) => {
+  await page.goto('/projects/');
+  await page.getByRole('button', { name: '프레디저: 백엔드' }).click();
+  await page.getByRole('button', { name: '전체' }).click();
+  await expect(page.locator('.card-wrap')).toHaveCount(13);
+  const names = await page.locator('.card-wrap').evaluateAll((els) => els.map((e) => getComputedStyle(e).animationName));
+  expect(new Set(names)).toEqual(new Set(['none']));
+});
+
+test('링크 없는 회사 카드에는 마우스를 올려도 안내 상자가 생기지 않는다', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', '마우스 기준');
+  await page.goto('/projects/');
+  const card = page.locator('.card--static').first();
+  await card.hover();
+  expect(await card.evaluate((el) => getComputedStyle(el, '::after').content)).toBe('none');
+});

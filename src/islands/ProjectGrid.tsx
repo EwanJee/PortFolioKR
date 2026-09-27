@@ -7,6 +7,8 @@ import { teamLabel } from '../lib/teams';
 export default function ProjectGrid({ items }: { items: GridItem[] }) {
   const [filter, setFilter] = useState<Filter>('all');
   const [stack, setStack] = useState<string | null>(null);
+  // 사용자가 탭이나 '모두 보기'를 누른 뒤에는 카드 등장 움직임을 다시 재생하지 않는다(움직임은 처음 한 번만).
+  const [settled, setSettled] = useState(false);
 
   useEffect(() => {
     // 사례에 쓰인 기술 이름만 받는다. 아무 문구나 받으면 링크 하나로 이 사이트에 임의 문구를 띄울 수 있다.
@@ -17,7 +19,13 @@ export default function ProjectGrid({ items }: { items: GridItem[] }) {
     if (team) setFilter(team);
   }, [items]);
 
+  const choose = (value: Filter) => {
+    setSettled(true);
+    setFilter(value);
+  };
+
   const clearStack = () => {
+    setSettled(true);
     setStack(null);
     // 화면 전환(ClientRouter)이 기록에 넣어 둔 값을 지우면 뒤로 가기가 이 페이지로 돌아오지 못하므로 그대로 둔다.
     window.history.replaceState(window.history.state, '', window.location.pathname);
@@ -30,13 +38,14 @@ export default function ProjectGrid({ items }: { items: GridItem[] }) {
 
   return (
     <div className="project-grid">
-      <FilterTabs options={FILTERS} value={filter} onChange={setFilter} label="팀으로 거르기" />
+      <FilterTabs options={FILTERS} value={filter} onChange={choose} label="팀으로 거르기" />
       {stack && (
         <p className="stack-note">
           {`${stack} 사용 사례만 보여 줍니다. `}<button type="button" className="link-button" onClick={clearStack}>모두 보기</button>
         </p>
       )}
-      <ul className="cards">
+      {visible.length === 0 && <p className="empty-note">이 조건에 맞는 프로젝트가 없습니다.</p>}
+      <ul className={settled ? 'cards cards--settled' : 'cards'}>
         {visible.map((item, i) => (
           <li key={item.slug} className="card-wrap" style={{ animationDelay: `${0.1 * i}s` }}>
             {item.kind === 'case' ? <CaseCard item={item} imageRank={stills.indexOf(item.slug)} /> : <PersonalCard item={item} />}

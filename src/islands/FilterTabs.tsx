@@ -50,6 +50,8 @@ export default function FilterTabs<T extends string>({ options, value, onChange,
     const el = row.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
+      // Ctrl+휠과 트랙패드 핀치는 화면 확대이고, 취소할 수 없는 휠은 페이지가 이미 움직이고 있으므로 건드리지 않는다.
+      if (e.ctrlKey || !e.cancelable) return;
       if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
       // 휠 값은 픽셀, 줄(Firefox 마우스 휠), 페이지 단위로 올 수 있다. 줄은 16px, 페이지는 탭 줄 폭으로 환산한다.
       const unit = e.deltaMode === WheelEvent.DOM_DELTA_LINE ? LINE_PX : e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? el.clientWidth : 1;

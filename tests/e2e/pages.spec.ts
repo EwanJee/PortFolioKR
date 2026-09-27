@@ -40,8 +40,26 @@ test('어느 페이지에도 진행 중, 검토 중 같은 상태 표기가 없�
   const cases = ['tokyo-popup-chatbot', 'japan-retention-mvp', 'member-privacy-api', 'benefit-home', 'alerting', 'settlement-ledger-dedup', 'first-payment-restore', 'api-gateway-transition'];
   for (const route of ['/career/', '/projects/', '/troubleshooting/', ...cases.map((slug) => `/projects/${slug}/`)]) {
     await page.goto(route);
-    expect(await page.locator('main').innerText(), route).not.toMatch(/(진행|검토|리뷰) ?중/);
+    // 접힌 '자세히' 칸 안의 글도 보도록 textContent로 읽는다. '(목표)', '(예정)'도 상태 표기로 본다.
+    expect(await page.locator('main').evaluate((el) => el.textContent ?? ''), route).not.toMatch(/(진행|검토|리뷰) ?중|\((목표|예정)\)/);
   }
+});
+
+test('Redis 카드는 요청 규모를 거꾸로 셀 수 있는 비율을 싣지 않고, 자가 복구는 운영 적용이 아니라 개념 검증(PoC)으로 적는다', async ({ page }) => {
+  await page.goto('/troubleshooting/');
+  const text = await page.locator('article#redis-topology').evaluate((el) => el.textContent ?? '');
+  expect(text).not.toContain('0.52%');
+  expect(text).toContain('개념 검증(PoC)');
+  expect(text).not.toContain('스스로 복구되게 만들었습니다');
+});
+
+test('공유 문구는 지금 사례 수와 "회사명: 팀명" 표기를 따른다', async ({ page }) => {
+  await page.goto('/projects/');
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /무신사 사례 8개/);
+  await page.goto('/career/');
+  const career = await page.locator('meta[name="description"]').getAttribute('content');
+  expect(career).toContain('무신사: ');
+  expect(career).not.toContain('Global, Retention, Purchase 팀');
 });
 
 test('경력의 팀 제목을 누르면 프로젝트의 그 팀 탭으로 간다', async ({ page }) => {

@@ -52,6 +52,19 @@ describe('FilterTabs', () => {
     expect(sideways.defaultPrevented).toBe(false);
   });
 
+  it('Ctrl+휠(확대)과 취소할 수 없는 휠은 가로채지 않는다', () => {
+    const { container } = render(<FilterTabs options={options} value="a" onChange={() => {}} label="거르기" />);
+    const row = container.querySelector('.filters') as HTMLElement;
+    scrollState(row, { scrollWidth: 500, clientWidth: 300, scrollLeft: 0 });
+    const zoom = new WheelEvent('wheel', { deltaY: 40, ctrlKey: true, cancelable: true });
+    row.dispatchEvent(zoom);
+    expect(zoom.defaultPrevented).toBe(false);
+    expect(row.scrollLeft).toBe(0);
+    const passive = new WheelEvent('wheel', { deltaY: 40, cancelable: false });
+    row.dispatchEvent(passive);
+    expect(row.scrollLeft).toBe(0);
+  });
+
   it('탭이 모두 보이면 data-more를 두지 않는다', () => {
     const { container } = render(<FilterTabs options={options} value="a" onChange={() => {}} label="거르기" />);
     const row = container.querySelector('.filters') as HTMLElement;

@@ -30,6 +30,8 @@ describe('그림 정의', () => {
       { from: 'client', to: 'old' },
       { from: 'old', to: 'svc' },
     ]);
+    // 앱 준비 확인은 15초 → 30초이고, 35초는 파드가 요청을 받기 시작하는 시점이다.
+    expect(spec.nodes.find((n) => n.id === 'probe')?.label).toBe('준비 시점 15초 → 35초');
     const last = spec.steps.at(-1)!;
     expect(last.muted).toContain('old');
     expect(visibleEdges(spec, last)).toEqual([
