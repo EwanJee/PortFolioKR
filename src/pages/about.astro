@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import { profile } from '../data/profile';
+---
+<BaseLayout title="About | 지예환" description={profile.intro} ogImage="/open-graph/about.png">
+  <SectionLabel text="ABOUT" level={1} />
+  <p class="prose">{profile.about}</p>
+</BaseLayout>

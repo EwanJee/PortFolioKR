@@ -1,0 +1,17 @@
+---
+import { profile } from '../data/profile';
+
+const items = [
+  { href: profile.links.linkedin, label: 'in', name: 'LinkedIn', external: true },
+  { href: profile.links.github, label: 'GH', name: 'GitHub', external: true },
+  { href: `mailto:${profile.links.email}`, label: '@', name: '이메일', external: false },
+  { href: profile.links.blog, label: 'T', name: '기술 블로그', external: true },
+];
+---
+<ul class="social">
+  {items.map((i) => (
+    <li>
+      <a href={i.href} aria-label={i.name} target={i.external ? '_blank' : undefined} rel={i.external ? 'noopener noreferrer' : undefined}>{i.label}</a>
+    </li>
+  ))}
+</ul>

@@ -1,0 +1,25 @@
+:root {
+  --bg: #010e1b;
+  --panel: #09203a;
+  --accent: #12d640;
+  --accent-dark: #1c7d32;
+  --text: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.72);
+  --text-faint: rgba(255, 255, 255, 0.55);
+  --team-global: #5dade2;
+  --team-retention: #f5b041;
+  --team-purchase: #c39bd3;
+  --team-other: rgba(255, 255, 255, 0.45);
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+  --font-display: 'Poppins', 'Pretendard Variable', Pretendard, sans-serif;
+  --gutter: 132px;
+  --measure: 40em;
+  /* 헤더와 본문의 왼쪽 끝을 맞춘다: 화면이 1280px보다 넓으면 본문 최대 폭 기준으로 안쪽 여백을 늘린다. */
+  --edge: max(var(--gutter), calc((100% - 1280px) / 2 + var(--gutter)));
+}
+
+@media (max-width: 720px) {
+  :root {
+    --gutter: 20px;
+  }
+}

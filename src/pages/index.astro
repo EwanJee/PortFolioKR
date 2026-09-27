@@ -1,6 +1,12 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { profile } from '../data/profile';
+import { LEGACY_HASH_TARGETS } from '../lib/legacy-redirects';
 ---
-<html lang="ko">
-  <head><meta charset="utf-8" /><title>지예환</title></head>
-  <body><h1>지예환</h1></body>
-</html>
+<BaseLayout title="지예환 | Back-end Engineer" description={profile.intro} variant="hero">
+  <p slot="typed" class="typed">I am <span class="typed-role">{profile.roles[0]}</span></p>
+  <script is:inline define:vars={{ targets: LEGACY_HASH_TARGETS }}>
+    const target = targets[window.location.hash];
+    if (target) window.location.replace(target);
+  </script>
+</BaseLayout>
