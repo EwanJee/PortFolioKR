@@ -4701,6 +4701,7 @@ Expected: 상태 마지막 줄 `completed success`(`renewal`이라 build만 돌�
 
 Files:
 - Create: `scripts/screenshots.mjs`
+- Create: `scripts/serve-dist.mjs`
 
 Interfaces:
 - Consumes: 모든 이전 작업
@@ -4764,17 +4765,26 @@ node scripts/screenshots.mjs
 
 - [ ] Step 3: Lighthouse 점수를 잰다
 
+`scripts/serve-dist.mjs`는 GitHub Pages처럼 폴더 주소는 `index.html`로, 글자 파일은 gzip으로 내주는 측정용 서버다(저장소의 파일을 그대로 쓴다). `python3 -m http.server`는 압축하지 않아 페이지 크기가 실제보다 크게 잡힌다.
+
 ```bash
-for path in / /projects/ /projects/benefit-home/; do
-  npx --yes lighthouse@13.4.1 "http://localhost:4321$path" --only-categories=performance,accessibility,seo --output=json --output-path=/tmp/lh.json --quiet --chrome-flags="--headless=new" >/dev/null 2>&1
-  python3 -c "import json,sys; d=json.load(open('/tmp/lh.json'))['categories']; print(sys.argv[1], {k: round(v['score']*100) for k,v in d.items()})" "$path"
+node scripts/serve-dist.mjs dist 4323 >/dev/null 2>&1 &
+sleep 1
+for route in / /projects/ /projects/benefit-home/; do
+  for n in 1 2 3; do
+    npx --yes lighthouse@13.4.1 "http://localhost:4323$route" --only-categories=performance,accessibility,seo --output=json --output-path=/tmp/lh.json --quiet --chrome-flags="--headless=new" >/dev/null 2>&1
+    python3 -c "import json,sys; d=json.load(open('/tmp/lh.json'))['categories']; print(sys.argv[1], {k: round(v['score']*100) for k,v in d.items()})" "$route"
+  done
 done
 pkill -f 'http.server 4321'
+pkill -f 'serve-dist.mjs'
 ```
 
-명령 창을 나눠 실행하면 변수 값이 이어지지 않으므로, 서버는 프로세스 이름으로 끈다.
+- zsh에서 `path`는 `PATH`와 이어진 예약 변수라서, 반복 변수 이름을 `route`로 쓴다(`path`로 쓰면 반복 중에 명령을 못 찾는다).
+- 점수가 실행마다 조금씩 흔들리므로 주소마다 세 번 잰다.
+- 명령 창을 나눠 실행하면 변수 값이 이어지지 않으므로, 서버는 프로세스 이름으로 끈다.
 
-Expected: 세 주소 모두 performance, accessibility, seo가 90 이상. 90 미만이면 Lighthouse가 알려 준 항목(이미지 크기, 대비, 누락된 속성 등)을 고치고 다시 잰다.
+Expected: 세 주소 모두 세 번 다 performance, accessibility, seo가 90 이상. 90 미만이면 Lighthouse가 알려 준 항목(이미지 크기, 대비, 누락된 속성 등)을 고치고 다시 잰다.
 
 - [ ] Step 4: 사용자에게 내용 검토를 받는다
 
