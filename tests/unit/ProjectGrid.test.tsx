@@ -29,6 +29,16 @@ describe('ProjectGrid', () => {
     expect(gh.getAttribute('rel')).toBe('noopener noreferrer');
   });
 
+  it('첫 카드 이미지는 바로 받고 우선순위를 높이며, 뒤쪽 카드 이미지는 늦게 받는다', () => {
+    const withStill = (slug: string, src: string): GridItem => ({ kind: 'case', slug, title: slug, summary: 's', team: 'global', status: 'done', stack: [], still: { src, width: 300, height: 540 }, alt: slug });
+    const { container } = render(<ProjectGrid items={[withStill('a', '/a.webp'), withStill('b', '/b.webp'), withStill('c', '/c.webp')]} />);
+    const imgs = container.querySelectorAll('.card img');
+    expect(imgs[0].getAttribute('loading')).toBe('eager');
+    expect(imgs[0].getAttribute('fetchpriority')).toBe('high');
+    expect(imgs[1].getAttribute('fetchpriority')).toBeNull();
+    expect(imgs[2].getAttribute('loading')).toBe('lazy');
+  });
+
   it('제안 단계 사례에 상태를 표시한다', () => {
     render(<ProjectGrid items={items} />);
     expect(screen.getByText('제안·검토 중')).toBeTruthy();

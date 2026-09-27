@@ -10,12 +10,19 @@
   --team-retention: #f5b041;
   --team-purchase: #c39bd3;
   --team-other: rgba(255, 255, 255, 0.45);
-  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
-  --font-display: 'Poppins', 'Pretendard Variable', Pretendard, sans-serif;
+  /* 한글 글꼴(Pretendard)은 스크립트가 있으면 html에 fonts-ready가 붙은 뒤에 쓰고(BaseHead.astro), 그 전에는 기기 글꼴로 그린다. 스크립트가 없으면 처음부터 쓴다. */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+  --font-display: 'Poppins', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
   --gutter: 132px;
   --measure: 40em;
   /* 헤더와 본문의 왼쪽 끝을 맞춘다: 화면이 1280px보다 넓으면 본문 최대 폭 기준으로 안쪽 여백을 늘린다. */
   --edge: max(var(--gutter), calc((100% - 1280px) / 2 + var(--gutter)));
+}
+
+:root:not(.js),
+:root.fonts-ready {
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+  --font-display: 'Poppins', 'Pretendard Variable', Pretendard, sans-serif;
 }
 
 @media (max-width: 720px) {

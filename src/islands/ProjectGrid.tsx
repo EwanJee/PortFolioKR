@@ -31,7 +31,7 @@ export default function ProjectGrid({ items }: { items: GridItem[] }) {
       <ul className="cards">
         {items.map((item, i) => (
           <li key={item.slug} className={isDimmed(item, filter, stack) ? 'card-wrap is-dim' : 'card-wrap'} style={{ animationDelay: `${0.1 * i}s` }}>
-            {item.kind === 'case' ? <CaseCard item={item} /> : <PersonalCard item={item} />}
+            {item.kind === 'case' ? <CaseCard item={item} index={i} /> : <PersonalCard item={item} />}
           </li>
         ))}
       </ul>
@@ -39,13 +39,14 @@ export default function ProjectGrid({ items }: { items: GridItem[] }) {
   );
 }
 
-function CaseCard({ item }: { item: CaseItem }) {
+// 첫 화면에 보이는 앞쪽 카드 이미지는 바로 받고, 첫 이미지는 가장 큰 요소가 되므로 우선순위를 높인다.
+function CaseCard({ item, index }: { item: CaseItem; index: number }) {
   return (
     <a className="card" href={`/projects/${item.slug}/`}>
       <div className="card-media" data-hint="눌러서 자세히">
         {item.still ? (
           <div className="phone">
-            <img src={item.still.src} width={item.still.width} height={item.still.height} alt={item.alt} loading="lazy" style={{ viewTransitionName: `media-${item.slug}` }} />
+            <img src={item.still.src} width={item.still.width} height={item.still.height} alt={item.alt} loading={index < 2 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : undefined} style={{ viewTransitionName: `media-${item.slug}` }} />
           </div>
         ) : item.diagram ? (
           <div className="card-diagram" style={{ viewTransitionName: `media-${item.slug}` }}>
