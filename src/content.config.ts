@@ -24,7 +24,7 @@ const projects = defineCollection({
           z.object({ kind: z.literal('gif'), still: image(), motion: z.string().regex(/^\/media\/.+\.gif$/).optional(), alt: z.string() }),
           z.object({
             kind: z.literal('diagram'),
-            diagram: z.enum(['race-condition', 'signal-pipeline', 'privacy-flow', 'alert-flow', 'restore-state-machine']),
+            diagram: z.enum(['race-condition', 'signal-pipeline', 'privacy-flow', 'alert-flow', 'restore-state-machine', 'gateway-shift']),
             alt: z.string(),
           }),
         ]),

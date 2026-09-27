@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react';
 import FilterTabs from './FilterTabs';
-import { TEAMS, TEAM_LABEL, teamLabel, type Team } from '../lib/teams';
+import { TEAMS, teamLabel, type Team } from '../lib/teams';
 
 export type TroubleItem = { slug: string; title: string; team: Team; summary?: string; rows: [string, string][]; related?: string };
 
@@ -10,8 +10,9 @@ type TeamFilter = 'all' | Team;
 // 처음 HTML에는 모든 카드를 넣어 두므로 주소의 #으로 카드를 바로 열 수 있다.
 export default function TroubleList({ items }: { items: TroubleItem[] }) {
   const [filter, setFilter] = useState<TeamFilter>('all');
-  const teams = TEAMS.filter((t) => items.some((i) => i.team === t));
-  const options: { id: TeamFilter; label: string }[] = [{ id: 'all', label: '전체' }, ...teams.map((t) => ({ id: t, label: TEAM_LABEL[t] }))];
+  // 탭은 "회사명: 팀명"으로, 최신 팀이 먼저다(프로젝트 탭과 같은 규칙).
+  const teams = [...TEAMS].reverse().filter((t) => items.some((i) => i.team === t));
+  const options: { id: TeamFilter; label: string }[] = [{ id: 'all', label: '전체' }, ...teams.map((t) => ({ id: t, label: teamLabel(t) }))];
   const visible = items.filter((i) => filter === 'all' || i.team === filter);
 
   return (

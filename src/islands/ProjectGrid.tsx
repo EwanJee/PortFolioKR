@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import FilterTabs from './FilterTabs';
 import StepDiagram from './StepDiagram';
-import { FILTERS, isHidden, readStackParam, type CaseItem, type Filter, type GridItem, type PersonalItem } from '../lib/project-filter';
+import { FILTERS, isHidden, personalLabel, readFilterParam, readStackParam, type CaseItem, type Filter, type GridItem, type PersonalItem } from '../lib/project-filter';
 import { teamLabel } from '../lib/teams';
 
 export default function ProjectGrid({ items }: { items: GridItem[] }) {
@@ -12,6 +12,9 @@ export default function ProjectGrid({ items }: { items: GridItem[] }) {
     // 사례에 쓰인 기술 이름만 받는다. 아무 문구나 받으면 링크 하나로 이 사이트에 임의 문구를 띄울 수 있다.
     const value = readStackParam(window.location.search);
     setStack(value && items.some((item) => item.stack.includes(value)) ? value : null);
+    // 경력의 팀 제목 링크(?team=)로 들어오면 그 탭을 눌린 채로 연다.
+    const team = readFilterParam(window.location.search);
+    if (team) setFilter(team);
   }, [items]);
 
   const clearStack = () => {
@@ -69,14 +72,19 @@ function CaseCard({ item, imageRank }: { item: CaseItem; imageRank: number }) {
 }
 
 function PersonalCard({ item }: { item: PersonalItem }) {
+  const body = (
+    <div className="card-body">
+      <span className="team">{personalLabel(item)}, {item.period}</span>
+      <h2>{item.title}</h2>
+      <p>{item.summary}</p>
+      {item.stack.length > 0 && <ul className="chips">{item.stack.map((s) => <li key={s}>{s}</li>)}</ul>}
+    </div>
+  );
+  // 공개 링크가 없는 회사 프로젝트는 누를 수 없는 카드로 둔다.
+  if (!item.href) return <div className="card card--text card--static">{body}</div>;
   return (
     <a className="card card--text" href={item.href} target="_blank" rel="noopener noreferrer" data-hint="GitHub에서 보기">
-      <div className="card-body">
-        <span className="team">{item.label ?? '개인 프로젝트'}, {item.period}</span>
-        <h2>{item.title}</h2>
-        <p>{item.summary}</p>
-        <ul className="chips">{item.stack.map((s) => <li key={s}>{s}</li>)}</ul>
-      </div>
+      {body}
     </a>
   );
 }

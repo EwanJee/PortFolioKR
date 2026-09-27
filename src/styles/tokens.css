@@ -13,7 +13,8 @@
   /* 한글 글꼴(Pretendard)은 스크립트가 있으면 html에 fonts-ready가 붙은 뒤에 쓰고(BaseHead.astro), 그 전에는 기기 글꼴로 그린다. 스크립트가 없으면 처음부터 쓴다. */
   --font-sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
   --font-display: 'Poppins', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
-  --gutter: 132px;
+  /* 양옆 여백: 720px 이하 20px에서 1440px 132px까지 창 폭에 맞춰 늘어난다(중간 폭에서 글 칸이 좁아지지 않게). */
+  --gutter: clamp(20px, calc((100vw - 720px) * 0.155 + 20px), 132px);
   --measure: 40em;
   /* 헤더와 본문의 왼쪽 끝을 맞춘다: 화면이 1280px보다 넓으면 본문 최대 폭 기준으로 안쪽 여백을 늘린다. */
   --edge: max(var(--gutter), calc((100% - 1280px) / 2 + var(--gutter)));
@@ -25,8 +26,3 @@
   --font-display: 'Poppins', 'Pretendard Variable', Pretendard, sans-serif;
 }
 
-@media (max-width: 720px) {
-  :root {
-    --gutter: 20px;
-  }
-}

@@ -7,7 +7,7 @@ export const profile = {
     '일할 때 효율과 기록을 중요하게 생각합니다. 업무를 처음 접해도 같은 결과가 나오도록, 프로세스를 문서화하고, 반복을 줄이는 데 관심이 있습니다.',
   roles: ['a Product Engineer', 'a Backend Developer', 'building order & claim systems', 'tracing incidents to the root'],
   about:
-    '운영자가 개발과 배포 없이 혜택을 편성하는 시스템을 만들고, API Gateway 단계 전환과 Redis 장애 재현·복구를 해 온 Java·Kotlin 백엔드 엔지니어입니다. 요구사항을 API 계약, ADR(아키텍처 결정 기록), 관측 지표로 구체화하고, AI 자동화로 구현과 검증의 반복 시간을 줄입니다.',
+    '운영자가 개발과 배포 없이 혜택을 편성하는 시스템을 만들고, API Gateway 단계 전환과 Redis 장애 재현·복구를 해 온 Java·Kotlin 백엔드 엔지니어입니다. 요구사항은 API 계약, ADR(아키텍처 결정 기록), 관측 지표로 구체화하고, 새로 합류한 동료와 비개발 운영자를 위한 온보딩·운영 문서, 혜택홈을 다른 팀에 넘기기 위한 인수인계 문서처럼 처음 맡는 사람이 참고할 기록을 남깁니다. 반복되는 수작업은 Jira 티켓의 빈 스프린트, 날짜, 상위 티켓을 채우는 도구처럼 코드로 바꾸고, AI 자동화로 구현과 검증의 반복 시간을 줄입니다.',
   links: {
     email: 'ewancareer@gmail.com',
     github: 'https://github.com/EwanJee',

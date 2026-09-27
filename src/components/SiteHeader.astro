@@ -27,7 +27,7 @@ const path = Astro.url.pathname;
   </header>
 ) : (
   <header class="bar">
-    <a class="bar-name" href="/" transition:name="site-name">{profile.nameKo}</a>
+    <a class="bar-name" href="/" transition:name="site-name">{profile.nameKo}<small>{profile.nameEn}</small></a>
     <nav class="site-nav" aria-label="주 메뉴" transition:name="site-nav">
       <ul>
         {NAV.map((item) => (

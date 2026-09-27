@@ -10,7 +10,7 @@ const dotColor = (team: string) => (team === 'other' ? 'var(--team-other)' : `va
       <p class="tl-date">{e.period}</p>
       <span class="tl-dot" style={`background:${dotColor(e.team)}`} aria-hidden="true"></span>
       <div class="tl-body">
-        <h2>{e.title}{e.sub && <span>{e.sub}</span>}</h2>
+        <h2>{e.link ? <a href={e.link}>{e.title}</a> : e.title}{e.sub && <span>{e.sub}</span>}</h2>
         <ul>
           {e.bullets.map((b) => (
             <li>

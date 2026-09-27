@@ -1,15 +1,23 @@
 import { expect, test } from '@playwright/test';
 
-test('카드 10개(사례 7 + 개인 2 + 부트캠프 1), 팀 탭을 누르면 그 팀 프로젝트만 보인다', async ({ page }) => {
+test('카드 13개, 탭은 "회사명: 팀명"이고 누르면 그 팀 프로젝트만 보인다', async ({ page }) => {
   await page.goto('/projects/');
-  await expect(page.locator('.card-wrap')).toHaveCount(10);
-  await page.getByRole('button', { name: 'Global' }).click();
+  expect(await page.locator('.filter').allTextContents()).toEqual(['전체', '무신사: Purchase 팀', '무신사: Retention 팀', '무신사: Global 팀', '아이헤이트플라잉버그스: R&D', '프레디저: 백엔드', '개인·부트캠프']);
+  await page.goto('/projects/');
+  await expect(page.locator('.card-wrap')).toHaveCount(13);
+  await page.getByRole('button', { name: '무신사: Global 팀' }).click();
   await expect(page.locator('.card-wrap')).toHaveCount(3);
-  for (const label of await page.locator('.card-wrap .team').allTextContents()) expect(label).toBe('무신사: Global');
+  for (const label of await page.locator('.card-wrap .team').allTextContents()) expect(label).toBe('무신사: Global 팀');
+  await page.getByRole('button', { name: '무신사: Retention 팀' }).click();
+  await expect(page.locator('.card-wrap')).toHaveCount(3);
   await page.getByRole('button', { name: '개인·부트캠프' }).click();
   await expect(page.locator('.card-wrap')).toHaveCount(3);
+  await page.getByRole('button', { name: '아이헤이트플라잉버그스: R&D' }).click();
+  await expect(page.locator('.card-wrap')).toHaveCount(1);
+  await page.getByRole('button', { name: '프레디저: 백엔드' }).click();
+  await expect(page.locator('.card-wrap')).toHaveCount(1);
   await page.getByRole('button', { name: '전체' }).click();
-  await expect(page.locator('.card-wrap')).toHaveCount(10);
+  await expect(page.locator('.card-wrap')).toHaveCount(13);
 });
 
 test('프로젝트는 시간 순으로, 최신이 먼저 놓인다', async ({ page }) => {
@@ -19,13 +27,33 @@ test('프로젝트는 시간 순으로, 최신이 먼저 놓인다', async ({ pa
     '정산 원장 중복 삽입',
     '알림 체계 정비',
     '혜택홈 새 판 서버와 편성 어드민',
-    '일본 고객 재구매 지표 MVP와 생성형 AI 알림 품질',
+    'API Gateway 단계 전환',
+    '글로벌 이상 징후 탐색 자동화',
     '회원 개인정보 조회 일원화 설계',
     '도쿄 팝업 스토어 안내 챗봇',
     'CS Navigator',
     'Remember Assessment',
     'My Health Check',
+    'AI 디지털교과서 추천 학습',
+    '심리 진단 서비스',
   ]);
+});
+
+test('아이헤이트플라잉버그스, 프레디저 카드: "회사명: 팀명"으로 표시하고, 링크 없이 한 일과 성과를 보여 준다', async ({ page }) => {
+  await page.goto('/projects/');
+  const card = page.locator('.card', { hasText: 'AI 디지털교과서 추천 학습' });
+  await expect(card).toContainText('아이헤이트플라잉버그스: R&D, 2024.06 ~ 2024.09');
+  await expect(card).toContainText('1차 검증');
+  expect(await card.evaluate((el) => el.tagName)).not.toBe('A');
+  await expect(page.locator('.card', { hasText: '심리 진단 서비스' })).toContainText('프레디저: 백엔드, 2023.06 ~ 2023.08');
+});
+
+test('주소의 team 조건으로 해당 탭을 바로 연다(없는 값은 무시)', async ({ page }) => {
+  await page.goto('/projects/?team=purchase');
+  await expect(page.getByRole('button', { name: '무신사: Purchase 팀' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.card-wrap')).toHaveCount(2);
+  await page.goto('/projects/?team=' + encodeURIComponent('아무 문구'));
+  await expect(page.locator('.card-wrap')).toHaveCount(13);
 });
 
 test('부트캠프 팀 프로젝트 CS Navigator 카드가 조직 GitHub로 연결된다', async ({ page }) => {
@@ -39,8 +67,8 @@ test('부트캠프 팀 프로젝트 CS Navigator 카드가 조직 GitHub로 연�
 test('사례 카드의 팀 표시는 "회사명: 팀명"이다', async ({ page }) => {
   await page.goto('/projects/');
   const labels = await page.locator('.card:not(.card--text) .team').allTextContents();
-  expect(labels).toHaveLength(7);
-  for (const label of labels) expect(label).toMatch(/^무신사: (Global|Retention|Purchase)$/);
+  expect(labels).toHaveLength(8);
+  for (const label of labels) expect(label).toMatch(/^무신사: (Global|Retention|Purchase) 팀$/);
 });
 
 test('모두 보기를 누르고 사례를 열었다가 뒤로 가면 목록이 다시 보인다', async ({ page }) => {
@@ -49,7 +77,7 @@ test('모두 보기를 누르고 사례를 열었다가 뒤로 가면 목록이 
   await expect(page.getByText('Kafka 사용 사례만 보여 줍니다.')).toBeVisible();
   await expect(page.locator('.card-wrap')).toHaveCount(2);
   await page.getByRole('button', { name: '모두 보기' }).click();
-  await expect(page.locator('.card-wrap')).toHaveCount(10);
+  await expect(page.locator('.card-wrap')).toHaveCount(13);
   await expect(page).toHaveURL(/\/projects\/$/);
   await page.getByRole('link', { name: /혜택홈 새 판 서버/ }).click();
   await expect(page.locator('.case-info h1')).toContainText('혜택홈');

@@ -16,8 +16,8 @@ describe('ProjectGrid', () => {
 
   it('팀 탭을 누르면 그 팀 카드만 남는다', () => {
     const { container } = render(<ProjectGrid items={items} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Purchase' }));
-    expect(screen.getByRole('button', { name: 'Purchase' }).getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: '무신사: Purchase 팀' }));
+    expect(screen.getByRole('button', { name: '무신사: Purchase 팀' }).getAttribute('aria-pressed')).toBe('true');
     expect(container.querySelectorAll('.card-wrap')).toHaveLength(1);
     expect(screen.getByRole('link', { name: /원장/ })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: '전체' }));
@@ -25,9 +25,10 @@ describe('ProjectGrid', () => {
   });
 
   it('사례 카드의 팀 표시는 "회사명: 팀명"이다', () => {
-    render(<ProjectGrid items={items} />);
-    expect(screen.getByText('무신사: Retention')).toBeTruthy();
-    expect(screen.getByText('무신사: Purchase')).toBeTruthy();
+    const { container } = render(<ProjectGrid items={items} />);
+    const labels = [...container.querySelectorAll('.card .team')].map((el) => el.textContent);
+    expect(labels).toContain('무신사: Retention 팀');
+    expect(labels).toContain('무신사: Purchase 팀');
   });
 
   it('사례 카드는 사례 주소로, 개인 프로젝트는 GitHub 새 탭으로 연결한다', () => {
@@ -77,6 +78,29 @@ describe('ProjectGrid', () => {
     const { container } = render(<ProjectGrid items={items} />);
     expect(screen.queryByText(/사용 사례만/)).toBeNull();
     expect(container.querySelectorAll('.card-wrap')).toHaveLength(3);
+  });
+
+  it('주소의 team 조건으로 그 탭을 눌린 채로 열고, 없는 값은 무시한다', () => {
+    window.history.replaceState(null, '', '/projects/?team=purchase');
+    const { container, unmount } = render(<ProjectGrid items={items} />);
+    expect(screen.getByRole('button', { name: '무신사: Purchase 팀' }).getAttribute('aria-pressed')).toBe('true');
+    expect(container.querySelectorAll('.card-wrap')).toHaveLength(1);
+    unmount();
+    window.history.replaceState(null, '', '/projects/?team=nope');
+    const again = render(<ProjectGrid items={items} />);
+    expect(again.container.querySelectorAll('.card-wrap')).toHaveLength(3);
+  });
+
+  it('링크가 없는 회사 프로젝트 카드는 누를 수 없는 카드로 그리고, "회사명: 팀명" 탭에서 보인다', () => {
+    const aidt: GridItem = { kind: 'personal', slug: 'aidt', title: 'AI 디지털교과서 추천 학습', summary: 's', period: '2024.06 ~ 2024.09', stack: ['Java'], company: 'ihateflyingbugs' };
+    const { container } = render(<ProjectGrid items={[...items, aidt]} />);
+    const card = [...container.querySelectorAll('.card')].find((c) => c.textContent?.includes('AI 디지털교과서'));
+    expect(card?.tagName).toBe('DIV');
+    expect(card?.textContent).toContain('아이헤이트플라잉버그스: R&D, 2024.06 ~ 2024.09');
+    fireEvent.click(screen.getByRole('button', { name: '아이헤이트플라잉버그스: R&D' }));
+    expect(container.querySelectorAll('.card-wrap')).toHaveLength(1);
+    fireEvent.click(screen.getByRole('button', { name: '개인·부트캠프' }));
+    expect(container.querySelectorAll('.card-wrap')).toHaveLength(1);
   });
 
   it('주소의 stack 조건에 맞는 카드만 보이고, 모두 보기로 되돌린다', () => {

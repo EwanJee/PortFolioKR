@@ -91,6 +91,13 @@ test('다른 페이지: 위로 붙은 헤더와 현재 메뉴 표시', async ({ 
   await expect(page.locator('h1')).toHaveText('ABOUT');
 });
 
+test('다른 페이지의 위쪽 막대에도 이름이 "지예환 Ewan Jee"로 보인다', async ({ page }) => {
+  for (const route of ['/about/', '/projects/benefit-home/']) {
+    await page.goto(route);
+    await expect(page.locator('.bar-name')).toHaveText(/^지예환\s*Ewan Jee$/);
+  }
+});
+
 test('키보드: Tab으로 메뉴에 닿고 포커스 표시가 보인다', async ({ page }) => {
   await page.goto('/about/');
   await page.keyboard.press('Tab');
@@ -141,6 +148,55 @@ test('모바일: 메뉴, 탭, 버튼, 링크는 누르기 쉬운 크기다', asy
   }
 });
 
+test('모바일: 거르기 탭은 한 줄로 놓이고, 옆으로 밀어 넘긴다', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', '터치 화면 기준');
+  for (const route of ['/projects/', '/troubleshooting/']) {
+    await page.goto(route);
+    const tops = await page.locator('.filter').evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().top)));
+    expect(new Set(tops).size, `${route} 탭 줄 수`).toBe(1);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, route).toBeLessThanOrEqual(1);
+  }
+  await page.goto('/projects/');
+  const row = page.locator('.filters');
+  expect(await row.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true);
+  await expect(row).toHaveAttribute('data-more', 'right');
+  const box = (await row.boundingBox())!;
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Input.synthesizeScrollGesture', { x: Math.round(box.x + box.width - 40), y: Math.round(box.y + box.height / 2), xDistance: -240, yDistance: 0, gestureSourceType: 'touch', speed: 1200 });
+  await expect.poll(() => row.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0);
+  await expect(row).toHaveAttribute('data-more', /left/);
+});
+
+test('창을 줄여 탭이 넘치면 마우스 휠로도 옆으로 넘기고, 끝에 닿으면 페이지가 내려간다', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', '마우스 기준');
+  await page.setViewportSize({ width: 768, height: 800 });
+  await page.goto('/projects/');
+  const row = page.locator('.filters');
+  await expect(row).toHaveAttribute('data-more', 'right');
+  const box = (await row.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.wheel(0, 120);
+  await expect.poll(() => row.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  for (let i = 0; i < 6; i += 1) await page.mouse.wheel(0, 200);
+  await expect(row).toHaveAttribute('data-more', 'left');
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+});
+
+test('모바일: 주소로 연 탭은 탭 줄 안의 보이는 자리로 옮겨 온다', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', '터치 화면 기준');
+  await page.goto('/projects/?team=prediger');
+  const pressed = page.locator('.filter[aria-pressed="true"]');
+  await expect(pressed).toHaveText('프레디저: 백엔드');
+  await expect
+    .poll(async () => {
+      const [b, c] = await Promise.all([pressed.boundingBox(), page.locator('.filters').boundingBox()]);
+      return Boolean(b && c && b.x >= c.x - 1 && b.x + b.width <= c.x + c.width + 1);
+    })
+    .toBe(true);
+});
+
 test('모바일: 경력의 팀 설명은 팀 이름 아래 줄에 따로 놓인다', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile', '좁은 화면 기준');
   await page.goto('/career/');
@@ -153,7 +209,7 @@ test('모바일: 경력의 팀 설명은 팀 이름 아래 줄에 따로 놓인�
 
 test('320px 폭에서도 주요 주소와 사례 페이지에 가로 스크롤이 없다', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 640 });
-  const cases = ['tokyo-popup-chatbot', 'japan-retention-mvp', 'member-privacy-api', 'benefit-home', 'alerting', 'settlement-ledger-dedup', 'first-payment-restore'];
+  const cases = ['tokyo-popup-chatbot', 'japan-retention-mvp', 'member-privacy-api', 'benefit-home', 'alerting', 'settlement-ledger-dedup', 'first-payment-restore', 'api-gateway-transition'];
   for (const route of [...ROUTES, ...cases.map((slug) => `/projects/${slug}/`)]) {
     await page.goto(route);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -163,7 +219,7 @@ test('320px 폭에서도 주요 주소와 사례 페이지에 가로 스크롤�
 
 test('창을 줄여도(480~1024px) 주요 주소와 사례 페이지에 가로 스크롤이 없다', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', '데스크톱 창을 줄이는 경우');
-  const cases = ['tokyo-popup-chatbot', 'japan-retention-mvp', 'member-privacy-api', 'benefit-home', 'alerting', 'settlement-ledger-dedup', 'first-payment-restore'];
+  const cases = ['tokyo-popup-chatbot', 'japan-retention-mvp', 'member-privacy-api', 'benefit-home', 'alerting', 'settlement-ledger-dedup', 'first-payment-restore', 'api-gateway-transition'];
   for (const width of [480, 600, 768, 900, 1024]) {
     await page.setViewportSize({ width, height: 800 });
     for (const route of [...ROUTES, ...cases.map((slug) => `/projects/${slug}/`)]) {
@@ -171,6 +227,16 @@ test('창을 줄여도(480~1024px) 주요 주소와 사례 페이지에 가로 �
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       expect(overflow, `${width}px ${route}`).toBeLessThanOrEqual(1);
     }
+  }
+});
+
+test('창을 줄여도 양옆 여백이 줄어 글 칸이 좁아지지 않는다', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', '데스크톱 창을 줄이는 경우');
+  for (const [width, minProse] of [[1024, 420], [900, 360], [768, 320]] as const) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/about/');
+    const prose = await page.locator('.about .prose').evaluate((el) => el.getBoundingClientRect().width);
+    expect(prose, `${width}px 소개 글 칸`).toBeGreaterThanOrEqual(minProse);
   }
 });
 

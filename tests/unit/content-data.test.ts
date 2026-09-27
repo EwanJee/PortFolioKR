@@ -3,6 +3,7 @@ import { career, education } from '../../src/data/career';
 import { personalProjects } from '../../src/data/personal-projects';
 import { skills } from '../../src/data/skills';
 import { profile } from '../../src/data/profile';
+import { personalLabel } from '../../src/lib/project-filter';
 
 describe('경력', () => {
   it('최근 팀부터 Purchase, Retention, Global 순서다', () => {
@@ -42,11 +43,22 @@ describe('기술과 개인 프로젝트', () => {
     const all = skills.flatMap((g) => g.items);
     expect(new Set(all).size).toBe(all.length);
   });
-  it('개인 프로젝트는 EwanJee 저장소로, 부트캠프 팀 프로젝트는 팀 조직 GitHub로 연결된다', () => {
-    expect(personalProjects.map((p) => [p.label ?? '개인 프로젝트', p.href])).toEqual([
+  it('개인 프로젝트는 EwanJee 저장소로, 부트캠프는 팀 조직 GitHub로 연결되고, 회사 프로젝트는 링크가 없다', () => {
+    expect(personalProjects.map((p) => [personalLabel({ kind: 'personal', ...p }), p.href ?? null])).toEqual([
       ['부트캠프 팀 프로젝트', 'https://github.com/twelevegg'],
       ['개인 프로젝트', 'https://github.com/EwanJee/NEWJOB-Ver2.0'],
       ['개인 프로젝트', 'https://github.com/EwanJee/HealthWebApp'],
+      ['아이헤이트플라잉버그스: R&D', null],
+      ['프레디저: 백엔드', null],
+    ]);
+  });
+  it('경력 제목은 "회사명: 팀명"이고, 제목을 누르면 프로젝트의 그 탭으로 연결된다', () => {
+    expect(career.map((c) => [c.title, c.link ?? null])).toEqual([
+      ['무신사: Purchase 팀', '/projects/?team=purchase'],
+      ['무신사: Retention 팀', '/projects/?team=retention'],
+      ['무신사: Global 팀', '/projects/?team=global'],
+      ['아이헤이트플라잉버그스: R&D', '/projects/?team=ihateflyingbugs'],
+      ['프레디저: 백엔드', '/projects/?team=prediger'],
     ]);
   });
 });

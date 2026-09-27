@@ -3,7 +3,10 @@ import { expect, test } from '@playwright/test';
 test('경력: 팀 3개, 학력, Rutgers 졸업', async ({ page }) => {
   await page.goto('/career/');
   await expect(page.locator('.tl-row')).toHaveCount(5);
-  await expect(page.getByText('무신사 Purchase 팀')).toBeVisible();
+  await expect(page.getByText('무신사: Purchase 팀')).toBeVisible();
+  await expect(page.getByText('아이헤이트플라잉버그스: R&D')).toBeVisible();
+  await expect(page.getByText('AI 디지털교과서 추천 학습 파트 개발')).toBeVisible();
+  await expect(page.getByText('1차 검증 합격, 정부 AIDT(AI 디지털교과서) 선정 업체 기여')).toBeVisible();
   await expect(page.getByText('Rutgers University–New Brunswick')).toBeVisible();
 });
 
@@ -18,26 +21,49 @@ test('경력: 모든 줄이 "프로젝트명: 설명" 형식이고 프로젝트�
   await expect(page.getByText('이후 하라주쿠 팝업에 그대로 재활용')).toBeVisible();
 });
 
+test('경력, 프로젝트, 소개 어디에도 "인턴"이라는 말이 없다', async ({ page }) => {
+  for (const route of ['/career/', '/projects/', '/about/']) {
+    await page.goto(route);
+    expect(await page.locator('main').innerText(), route).not.toContain('인턴');
+  }
+});
+
+test('아이헤이트플라잉버그스 제목을 누르면 프로젝트의 그 탭으로 간다', async ({ page }) => {
+  await page.goto('/career/');
+  await page.getByRole('link', { name: '아이헤이트플라잉버그스: R&D' }).click();
+  await expect(page).toHaveURL(/\/projects\/\?team=ihateflyingbugs$/);
+  await expect(page.getByRole('button', { name: '아이헤이트플라잉버그스: R&D' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.card-wrap')).toHaveCount(1);
+});
+
 test('어느 페이지에도 진행 중, 검토 중 같은 상태 표기가 없다', async ({ page }) => {
-  const cases = ['tokyo-popup-chatbot', 'japan-retention-mvp', 'member-privacy-api', 'benefit-home', 'alerting', 'settlement-ledger-dedup', 'first-payment-restore'];
+  const cases = ['tokyo-popup-chatbot', 'japan-retention-mvp', 'member-privacy-api', 'benefit-home', 'alerting', 'settlement-ledger-dedup', 'first-payment-restore', 'api-gateway-transition'];
   for (const route of ['/career/', '/projects/', '/troubleshooting/', ...cases.map((slug) => `/projects/${slug}/`)]) {
     await page.goto(route);
     expect(await page.locator('main').innerText(), route).not.toMatch(/(진행|검토|리뷰) ?중/);
   }
 });
 
+test('경력의 팀 제목을 누르면 프로젝트의 그 팀 탭으로 간다', async ({ page }) => {
+  await page.goto('/career/');
+  await page.getByRole('link', { name: '무신사: Purchase 팀' }).click();
+  await expect(page).toHaveURL(/\/projects\/\?team=purchase$/);
+  await expect(page.getByRole('button', { name: '무신사: Purchase 팀' })).toHaveAttribute('aria-pressed', 'true');
+  for (const label of await page.locator('.card-wrap .team').allTextContents()) expect(label).toBe('무신사: Purchase 팀');
+});
+
 test.describe('스크립트 꺼짐', () => {
   test.use({ javaScriptEnabled: false });
   test('경력 숫자가 최종 값으로 보인다', async ({ page }) => {
     await page.goto('/career/');
-    await expect(page.locator('.tl-row').nth(1)).toContainText('알림 채널 17개를 역할별 5개로 정리');
+    await expect(page.locator('.tl-row').nth(1)).toContainText('알림 채널 17개를 역할별 5개로 모으고');
   });
 });
 
 test('트러블슈팅: 9건, 앵커로 바로 열기, 자세히 펼치기', async ({ page }) => {
   await page.goto('/troubleshooting/#redis-topology');
   await expect(page.locator('.trouble')).toHaveCount(9);
-  for (const label of await page.locator('.trouble .team').allTextContents()) expect(label).toMatch(/^무신사: (Global|Retention|Purchase)$/);
+  for (const label of await page.locator('.trouble .team').allTextContents()) expect(label).toMatch(/^무신사: (Global|Retention|Purchase) 팀$/);
   const card = page.locator('#redis-topology');
   await card.getByText('자세히').click();
   // 문구는 바뀔 수 있으니 칸의 순서와 펼쳐진 내용이 보이는지만 확인한다.
@@ -48,11 +74,29 @@ test('트러블슈팅: 9건, 앵커로 바로 열기, 자세히 펼치기', asyn
 test('트러블슈팅: 팀 탭을 누르면 그 팀 기록만 보인다', async ({ page }) => {
   await page.goto('/troubleshooting/');
   await expect(page.locator('.trouble')).toHaveCount(9);
-  await page.getByRole('button', { name: 'Global' }).click();
+  expect(await page.locator('.filter').allTextContents()).toEqual(['전체', '무신사: Retention 팀', '무신사: Global 팀']);
+  await page.getByRole('button', { name: '무신사: Global 팀' }).click();
   await expect(page.locator('.trouble')).toHaveCount(4);
-  for (const label of await page.locator('.trouble .team').allTextContents()) expect(label).toBe('무신사: Global');
+  for (const label of await page.locator('.trouble .team').allTextContents()) expect(label).toBe('무신사: Global 팀');
   await page.getByRole('button', { name: '전체' }).click();
   await expect(page.locator('.trouble')).toHaveCount(9);
+});
+
+test('트러블슈팅: 보안 건을 뺀 모든 기록에 문제 정의, 접근, 해결, 검증, 문서화 칸이 있다', async ({ page }) => {
+  await page.goto('/troubleshooting/');
+  const cards = page.locator('.trouble:not(#api-security)');
+  await expect(cards).toHaveCount(8);
+  // KAPT 건은 문서화 사실이 근거 자료에 없어 사용자 확인을 기다린다(없는 문서를 지어내지 않는다).
+  const recordPending = new Set(['kapt']);
+  for (let i = 0; i < 8; i += 1) {
+    const card = cards.nth(i);
+    const id = (await card.getAttribute('id')) ?? '';
+    const labels = await card.locator('dt').allTextContents();
+    for (const need of ['문제 정의', '접근', '해결', '검증', '문서화']) {
+      if (need === '문서화' && recordPending.has(id)) continue;
+      expect(labels, `${id}: ${need}`).toContain(need);
+    }
+  }
 });
 
 test('보안 건은 제목만 보이고 대상이나 방식은 없다', async ({ page }) => {
@@ -98,4 +142,13 @@ test('어느 페이지에도 전화번호 모양이 없다', async ({ page }) =>
     await page.goto(route);
     expect(await page.locator('body').innerText(), route).not.toMatch(/01[016789]-\d{3,4}-\d{4}/);
   }
+});
+
+test('트러블슈팅의 게이트웨이 502 카드와 API Gateway 사례가 서로 이어진다', async ({ page }) => {
+  await page.goto('/troubleshooting/');
+  await page.locator('article#gateway-502').getByRole('link', { name: '관련 사례 보기' }).click();
+  await expect(page).toHaveURL(/\/projects\/api-gateway-transition\/$/);
+  await page.locator('.case-body').getByRole('link', { name: '트러블슈팅 기록' }).click();
+  await expect(page).toHaveURL(/\/troubleshooting\/#gateway-502$/);
+  await expect(page.locator('article#gateway-502')).toBeVisible();
 });

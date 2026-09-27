@@ -23,6 +23,21 @@ describe('그림 정의', () => {
     expect(spec.variant?.steps.at(-1)?.show).toContain('reject');
   });
 
+  it('게이트웨이 전환 그림은 예전 외부 파드에서 시작해, 마지막 단계에 게이트웨이 길만 남기고 예전 파드를 흐리게 한다', () => {
+    const spec = DIAGRAMS['gateway-shift'];
+    expect(spec.steps).toHaveLength(6);
+    expect(visibleEdges(spec, spec.steps[0])).toEqual([
+      { from: 'client', to: 'old' },
+      { from: 'old', to: 'svc' },
+    ]);
+    const last = spec.steps.at(-1)!;
+    expect(last.muted).toContain('old');
+    expect(visibleEdges(spec, last)).toEqual([
+      { from: 'client', to: 'gw' },
+      { from: 'gw', to: 'svc' },
+    ]);
+  });
+
   it('단계에 edges가 있으면 그것만 보인다', () => {
     const spec = DIAGRAMS['privacy-flow'];
     expect(visibleEdges(spec, spec.steps[1]).every((e) => e.from === 'api' || e.to === 'api')).toBe(true);

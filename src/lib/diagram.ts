@@ -1,4 +1,4 @@
-export type DiagramId = 'race-condition' | 'signal-pipeline' | 'privacy-flow' | 'alert-flow' | 'restore-state-machine';
+export type DiagramId = 'race-condition' | 'signal-pipeline' | 'privacy-flow' | 'alert-flow' | 'restore-state-machine' | 'gateway-shift';
 export type DiagramNode = { id: string; label: string; x: number; y: number; w: number; h: number };
 export type DiagramEdge = { from: string; to: string };
 export type DiagramStep = {

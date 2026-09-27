@@ -1,17 +1,32 @@
 import { expect, test } from '@playwright/test';
 
-const CASES = ['tokyo-popup-chatbot', 'japan-retention-mvp', 'member-privacy-api', 'benefit-home', 'alerting', 'settlement-ledger-dedup', 'first-payment-restore'];
+const CASES = ['tokyo-popup-chatbot', 'japan-retention-mvp', 'member-privacy-api', 'benefit-home', 'alerting', 'settlement-ledger-dedup', 'first-payment-restore', 'api-gateway-transition'];
 
 for (const slug of CASES) {
   test(`${slug}: 끝의 / 없이 바로 열어도 제목, 상태, 미디어가 보인다`, async ({ page }) => {
     await page.goto(`/projects/${slug}`);
     await expect(page).toHaveURL(new RegExp(`/projects/${slug}/$`));
     await expect(page.locator('.case-info h1')).toBeVisible();
-    await expect(page.locator('.case-team .team')).toHaveText(/^무신사: (Global|Retention|Purchase)$/);
+    await expect(page.locator('.case-team .team')).toHaveText(/^무신사: (Global|Retention|Purchase) 팀$/);
     await expect(page.locator('.case-media img, .case-media svg').first()).toBeVisible();
     expect(await page.locator('.case-cells li').count()).toBeLessThanOrEqual(3);
   });
 }
+
+test('사례 본문: 모든 사례에 기록과 자동화가 있고, 요청한 내용(QA 봇, 휴리스틱 규칙, 외부 파드 0개)이 보인다', async ({ page }) => {
+  for (const slug of CASES) {
+    await page.goto(`/projects/${slug}/`);
+    await expect(page.locator('.case-body h2', { hasText: '기록과 자동화' }), slug).toHaveCount(1);
+  }
+  await page.goto('/projects/benefit-home/');
+  await expect(page.locator('.case-body')).toContainText('AOS, iOS, 크롬 웹뷰');
+  await page.goto('/projects/japan-retention-mvp/');
+  await expect(page.locator('.case-body')).toContainText('휴리스틱 규칙');
+  await page.goto('/projects/api-gateway-transition/');
+  const body = page.locator('.case-body');
+  await expect(body).toContainText('개발, 알파, 운영 환경의 예전 외부 파드를 0개로');
+  await expect(body.locator('h2', { hasText: '배운 점' })).toHaveCount(1);
+});
 
 test('사례 페이지 위쪽에 프로젝트 목록으로 돌아가는 링크가 있다', async ({ page }) => {
   await page.goto('/projects/benefit-home/');
