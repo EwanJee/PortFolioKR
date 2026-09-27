@@ -334,13 +334,18 @@ Expected: `200`, `1`, `200`, `301 https://ewanjee.com/`, 그리고 `{"build_type
 
 이 되돌리기는 사이트 개편(`2026-09-27-site-renewal.md`)을 `master`에 합치기 전까지만 쓴다. 합친 뒤의 `master`에는 루트 `index.html`이 없어서, 브랜치 빌드로 되돌리면 소스 파일이 그대로 공개되고 사이트가 깨진다. 합친 뒤에는 사이트 개편 계획 Task 14의 되돌리기(합친 커밋을 `git revert -m 1`)를 쓴다. 이 내용을 세션 결정 로그에 남긴다.
 
+세션 결정 로그는 작업 폴더별로 쌓이므로, 지울 작업 폴더가 아닌 저장소 폴더에서 남긴다.
+
 ```bash
-bash ~/.claude/hooks/session-decide.sh "Pages 배포를 GitHub Actions로 전환 완료. 되돌리기(사이트 개편 합치기 전까지만): Settings → Pages → Source를 Deploy from a branch(master, root)로. 개편을 합친 뒤에는 합친 커밋을 git revert -m 1"
+(cd ../PortFolioKR && bash ~/.claude/hooks/session-decide.sh "Pages 배포를 GitHub Actions로 전환 완료. 되돌리기(사이트 개편 합치기 전까지만): Settings → Pages → Source를 Deploy from a branch(master, root)로. 개편을 합친 뒤에는 합친 커밋을 git revert -m 1")
 ```
 
 - [ ] Step 9: 작업 폴더를 정리한다
 
 ```bash
 cd ../PortFolioKR
-git worktree remove ../PortFolioKR-ci
+git -C ../PortFolioKR-ci status --short   # 도구가 만든 `?? .omc/` 같은 추적하지 않는 폴더만 있어야 한다
+git worktree remove --force ../PortFolioKR-ci
 ```
+
+추적 중인 파일이 바뀌어 있으면(`M`, `A` 등) 지우지 말고 멈춘다.

@@ -61,7 +61,7 @@ git fetch origin
 git merge --no-ff origin/master -m 'chore: 배포 워크플로가 들어간 master를 renewal에 합친다' -m $'Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01G9Qpw2CC7qHeQ1Hn846tQ7'
 ```
 
-`.gitignore`가 충돌하면 파일 전체를 아래 내용으로 바꾸고 `git add .gitignore && git commit --no-edit` 한다(위에서 준 병합 메시지가 그대로 쓰인다). 충돌이 없어도 아래 내용과 같게 맞춘다. 배포 전환 계획의 작업 폴더(`../PortFolioKR-ci`)가 남아 있으면 `git worktree remove ../PortFolioKR-ci`로 지운다.
+`.gitignore`가 충돌하면 파일 전체를 아래 내용으로 바꾸고 `git add .gitignore && git commit --no-edit --cleanup=strip` 한다(위에서 준 병합 메시지가 쓰이고, git이 붙이는 충돌 기록 주석은 지워져 두 줄 서명이 마지막에 남는다). 충돌이 없어도 아래 내용과 같게 맞춘다. 배포 전환 계획의 작업 폴더(`../PortFolioKR-ci`)는 그 계획의 마지막 단계에서 지운다.
 
 ```
 .idea
@@ -2911,6 +2911,7 @@ period: 2026.03 ~ 2026.04
 role: 단독 설계, 개발, 배포
 status: done
 stack: [React, TypeScript, Vite, Amplitude]
+# 기술 태그 근거(evidence): E-chatbot-stack
 metrics:
   - { label: 17일간 사용자, value: 약 5천 명, evidence: E-chatbot-users }
   - { label: 방문 대비 클릭, value: 약 62%, evidence: E-chatbot-ctr }
@@ -2925,7 +2926,7 @@ order: 1
 
 ## 문제
 
-도쿄 팝업 스토어는 5개 층에 78개 브랜드가 들어섰고, 17일 동안 열렸습니다. 층과 브랜드를 한국어, 일본어, 영어로 안내해야 했고, 설계부터 배포까지 2주 안에 끝내야 했습니다.
+도쿄 팝업 스토어는 5개 층에 78개 브랜드가 들어섰습니다. 층과 브랜드를 한국어, 일본어, 영어로 안내해야 했고, 설계부터 배포까지 2주 안에 끝내야 했습니다.
 
 ## 검토한 대안
 
@@ -3077,6 +3078,7 @@ period: 2026.06 ~ 2026.09
 role: 알림 규칙과 채널 구조 설계
 status: done
 stack: [Grafana, Datadog, Slack]
+# 기술 태그 근거(evidence): E-alert-stack
 metrics:
   - { label: 알림 채널, value: 17 → 5, evidence: E-alert-channels }
   - { label: 알림 규칙, value: 36개, evidence: E-alert-rules }
@@ -4754,7 +4756,6 @@ await browser.close();
 ```bash
 npm run build
 python3 -m http.server 4321 --directory dist >/dev/null 2>&1 &
-SERVER=$!
 sleep 1
 node scripts/screenshots.mjs
 ```
@@ -4768,8 +4769,10 @@ for path in / /projects/ /projects/benefit-home/; do
   npx --yes lighthouse@13.4.1 "http://localhost:4321$path" --only-categories=performance,accessibility,seo --output=json --output-path=/tmp/lh.json --quiet --chrome-flags="--headless=new" >/dev/null 2>&1
   python3 -c "import json,sys; d=json.load(open('/tmp/lh.json'))['categories']; print(sys.argv[1], {k: round(v['score']*100) for k,v in d.items()})" "$path"
 done
-kill "$SERVER"
+pkill -f 'http.server 4321'
 ```
+
+명령 창을 나눠 실행하면 변수 값이 이어지지 않으므로, 서버는 프로세스 이름으로 끈다.
 
 Expected: 세 주소 모두 performance, accessibility, seo가 90 이상. 90 미만이면 Lighthouse가 알려 준 항목(이미지 크기, 대비, 누락된 속성 등)을 고치고 다시 잰다.
 
@@ -4797,13 +4800,18 @@ git merge --no-ff renewal -m 'feat: ewanjee.com 개편을 master에 합친다' -
 MERGE_SHA=$(git rev-parse HEAD)
 echo "$MERGE_SHA"
 git push origin master
+bash ~/.claude/hooks/session-decide.sh "ewanjee.com 개편을 master에 합침(합친 커밋 $MERGE_SHA). 되돌리기: master에서 git revert -m 1 $MERGE_SHA 후 push하면 배포 전환 계획의 워크플로가 예전 사이트를 다시 배포"
 ```
 
 합친 커밋을 하나 남겨야(`--no-ff`) 문제가 생겼을 때 그 커밋 하나를 되돌려 예전 사이트로 돌아갈 수 있다. `MERGE_SHA` 값을 적어 둔다. `git merge --ff-only origin/master`가 실패하면 로컬 `master`에 올리지 않은 커밋이 있다는 뜻이므로 멈추고 `git log --oneline origin/master..master`를 사용자에게 보여 준다. `renewal`과 합칠 때 충돌이 나면 멈추고 충돌 파일을 사용자에게 보여 준다.
 
 - [ ] Step 6: 배포를 기다리고 공개 사이트를 확인한다
 
+명령 창이 바뀌면 Step 5의 변수가 남지 않으므로, 합친 커밋을 다시 구한다(비어 있으면 GitHub가 최신 실행을 돌려준다).
+
 ```bash
+MERGE_SHA=$(git log -1 --merges --format=%H master)
+git log -1 --format=%s "$MERGE_SHA"   # feat: ewanjee.com 개편을 master에 합친다
 for i in $(seq 1 40); do
   st=$(gh api "repos/EwanJee/PortFolioKR/actions/workflows/deploy.yml/runs?head_sha=$MERGE_SHA&per_page=1" --jq '.workflow_runs[0] | "\(.status) \(.conclusion)"')
   echo "$st"
@@ -4823,16 +4831,18 @@ Expected: `completed success`, `200`, `301 https://ewanjee.com/`, `{"build_type"
 되돌리는 방법은 합친 커밋 하나를 되돌리는 것이다. 되돌린 `master`는 합치기 전 상태(배포 전환 계획의 워크플로와 예전 사이트 파일)가 되고, push하면 그 워크플로가 예전 사이트를 다시 배포한다. Pages 설정의 Source는 바꾸지 않는다(배포 전환 계획의 "Deploy from a branch" 되돌리기는 이 시점부터 쓰지 않는다).
 
 ```bash
-# 되돌려야 할 때만 실행한다
+# 되돌려야 할 때만 실행한다. 합친 커밋은 Step 5에서 세션 결정 로그에 적어 둔 값이다.
 git switch master
+MERGE_SHA=$(git log -1 --merges --format=%H master)
+git log -1 --format=%s "$MERGE_SHA"   # feat: ewanjee.com 개편을 master에 합친다 여야 한다
 git revert -m 1 --no-edit "$MERGE_SHA"
 git push origin master
 ```
 
-결과와 되돌리는 방법을 기록한다.
+공개 확인 결과를 기록한다.
 
 ```bash
-bash ~/.claude/hooks/session-decide.sh "ewanjee.com 개편 공개 완료(master 배포, 합친 커밋 $MERGE_SHA). 되돌리기: master에서 git revert -m 1 $MERGE_SHA 후 push하면 배포 전환 계획의 워크플로가 예전 사이트를 다시 배포"
+bash ~/.claude/hooks/session-decide.sh "ewanjee.com 개편 공개 확인 완료(배포 성공, 공개 사이트 화면 테스트 통과)"
 ```
 
 혜택홈 트래픽 수치는 1~3개월 뒤(2026년 12월 전후) Grafana로 다시 재서 `benefit-home.mdx`와 근거 파일을 고친다. 이 일정은 사용자에게 알려 둔다.
