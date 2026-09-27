@@ -68,3 +68,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* 구조 그림 */
+.diagram { margin: 0; width: 100%; }
+.diagram svg { width: 100%; height: auto; display: block; font-family: var(--font-sans); font-size: 12px; }
+.diagram-node { animation: node-in 0.3s ease both; }
+.diagram-node rect { fill: #12324f; stroke: rgba(255, 255, 255, 0.25); }
+.diagram-node text { fill: #ffffff; }
+.diagram-node.is-active rect { stroke: var(--accent); stroke-width: 2; }
+.diagram-node.is-danger rect { fill: #3a1418; stroke: #e05252; }
+.diagram-node.is-muted { opacity: 0.45; }
+.diagram-edge { stroke: rgba(18, 214, 64, 0.55); stroke-width: 1.5; }
+.diagram-arrow { fill: rgba(18, 214, 64, 0.8); }
+.diagram-caption { font-size: 14px; color: var(--text-muted); margin: 10px 0 8px; min-height: 3em; }
+.diagram-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.diagram-controls button { font: inherit; font-size: 13px; color: var(--text); background: transparent; border: 1px solid var(--accent-dark); border-radius: 4px; padding: 5px 12px; cursor: pointer; }
+.diagram-controls button:disabled { opacity: 0.4; cursor: default; }
+.diagram-toggle { font-size: 13px; color: var(--text-muted); display: inline-flex; gap: 6px; align-items: center; }
+@keyframes node-in { from { opacity: 0; } to { opacity: 1; } }
