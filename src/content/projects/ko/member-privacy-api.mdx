@@ -1,0 +1,25 @@
+---
+title: 회원 개인정보 조회 일원화 설계
+summary: 여러 시스템에 흩어진 회원 개인정보 조회 경로를 표준 API로 모으는 설계를 했습니다.
+team: global
+period: "2026.04"
+role: 설계(ADR, HLD)
+status: done
+stack: [REST API]
+facts:
+  - 조회 경로 일원화
+  - ADR, HLD 작성
+media:
+  kind: diagram
+  diagram: privacy-flow
+  alt: 흩어진 개인정보 조회 경로가 표준 API 하나로 모이는 그림
+order: 3
+---
+
+## 문제
+
+회원 개인정보를 조회하는 경로가 여러 시스템에 흩어져 있었습니다.
+
+## 결정
+
+흩어진 조회 경로를 표준 API로 모으는 설계를 ADR과 HLD로 정리했습니다.

@@ -1,0 +1,31 @@
+---
+title: 알림 체계 정비
+summary: 흩어진 알림 채널 17개를 역할별 5개로 모으고, 심각도별 알림 규칙 36개를 두었습니다.
+team: retention
+period: 2026.06 ~ 2026.09
+role: 알림 규칙과 채널 구조 설계
+status: done
+stack: [Grafana, Datadog, Slack]
+# 기술 태그 근거(evidence): E-alert-stack
+metrics:
+  - { label: 알림 채널, value: 17 → 5, evidence: E-alert-channels }
+  - { label: 알림 규칙, value: 36개, evidence: E-alert-rules }
+  - { label: 심각도, value: 3단계, evidence: E-alert-rules }
+media:
+  kind: diagram
+  diagram: alert-flow
+  alt: 지표와 로그가 규칙과 심각도를 거쳐 채널로 가는 흐름
+order: 5
+---
+
+## 문제
+
+알림 채널이 17개로 흩어져 있었습니다.
+
+## 결정
+
+지표와 로그에 심각도별 알림 규칙 36개를 두었습니다. 긴급 19개, 높음 4개, 통지 13개이고, 긴급은 담당자 호출까지 이어집니다. 흩어진 알림 채널 17개는 역할별 5개로 모았습니다.
+
+## 결과
+
+알림 채널을 17개에서 역할별 5개로 줄였습니다.

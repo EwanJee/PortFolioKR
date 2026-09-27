@@ -1,0 +1,42 @@
+---
+title: 도쿄 팝업 스토어 안내 챗봇
+summary: 78개 브랜드와 5개 층을 한국어, 일본어, 영어로 안내하는 챗봇을 2주 만에 설계부터 배포까지 했습니다.
+team: global
+period: 2026.03 ~ 2026.04
+role: 단독 설계, 개발, 배포
+status: done
+stack: [React, TypeScript, Vite, Amplitude]
+# 기술 태그 근거(evidence): E-chatbot-stack
+metrics:
+  - { label: 17일간 사용자, value: 약 5천 명, evidence: E-chatbot-users }
+  - { label: 방문 대비 클릭, value: 약 62%, evidence: E-chatbot-ctr }
+  - { label: 안내 언어, value: 3개, evidence: E-chatbot-scale }
+media:
+  kind: gif
+  still: ../../../assets/cases/chatbot.jpg
+  motion: /media/chatbot.gif
+  alt: 도쿄 팝업 스토어 안내 챗봇 화면
+order: 1
+---
+
+## 문제
+
+도쿄 팝업 스토어는 5개 층에 78개 브랜드가 들어섰습니다. 층과 브랜드를 한국어, 일본어, 영어로 안내해야 했고, 설계부터 배포까지 2주 안에 끝내야 했습니다.
+
+## 검토한 대안
+
+- LLM으로 답을 만들기
+- 키워드 규칙으로 정해 둔 답을 고르기
+
+## 결정
+
+서버 없이 앱 안의 웹 화면으로 동작하게 만들고, 답은 LLM 대신 키워드 규칙으로 골랐습니다. 응답 속도를 예측할 수 있고, 비용이 0원이고, 없는 사실을 지어내지 않기 때문입니다.
+
+## 결과
+
+- 17일 동안 고유 사용자 약 5천 명이 썼고, 방문 대비 클릭 전환율은 약 62%였습니다.
+- 이벤트 계측과 배포 자동화를 붙였습니다.
+
+## 배운 점
+
+짧게 운영하는 현장 서비스에서는 답이 늘 같고 빠르다는 점이 똑똑한 답보다 중요했습니다.
