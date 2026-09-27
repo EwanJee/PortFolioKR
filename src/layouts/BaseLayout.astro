@@ -14,9 +14,11 @@ interface Props {
   description: string;
   ogImage?: string;
   variant?: 'hero' | 'bar';
+  // 본문이 나타나는 움직임. 사례 페이지는 자리 이동 없이 투명도만 바꾼다(윗부분 이미지를 제자리에서 그려야 GIF가 가장 큰 요소로 바뀌지 않는다).
+  motion?: 'rise' | 'fade';
 }
 
-const { title, description, ogImage = '/open-graph/index.png', variant = 'bar' } = Astro.props;
+const { title, description, ogImage = '/open-graph/index.png', variant = 'bar', motion = 'rise' } = Astro.props;
 ---
 <html lang="ko">
   <head>
@@ -25,6 +27,6 @@ const { title, description, ogImage = '/open-graph/index.png', variant = 'bar' }
   <body>
     <a class="skip-link" href="#main">본문으로 건너뛰기</a>
     <SiteHeader variant={variant}><slot name="typed" slot="typed" /></SiteHeader>
-    <main id="main" class={variant === 'hero' ? 'main main--hero' : 'main rise'}><slot /></main>
+    <main id="main" class={variant === 'hero' ? 'main main--hero' : `main ${motion}`}><slot /></main>
   </body>
 </html>

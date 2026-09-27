@@ -142,3 +142,20 @@ test('사례 카드를 누르면 사례 페이지로 넘어간다', async ({ pag
   await expect(page).toHaveURL(/\/projects\/benefit-home\/$/);
   await expect(page.locator('.case-info h1')).toContainText('혜택홈');
 });
+
+test.describe('휴대폰(픽셀 배율 1.75)', () => {
+  test.use({ viewport: { width: 412, height: 823 }, deviceScaleFactor: 1.75, isMobile: true, hasTouch: true });
+  test('혜택홈: 정지 이미지가 GIF로 바뀌어도 가장 큰 요소(LCP)는 먼저 그린 정지 이미지로 남는다', async ({ page }) => {
+    await page.addInitScript(() => {
+      (window as unknown as { __lcp: string[] }).__lcp = [];
+      new PerformanceObserver((list) => {
+        for (const e of list.getEntries()) (window as unknown as { __lcp: string[] }).__lcp.push((e as PerformanceEntry & { url: string }).url);
+      }).observe({ type: 'largest-contentful-paint', buffered: true });
+    });
+    await page.goto('/projects/benefit-home/');
+    await expect(page.locator('.gif-player img')).toHaveAttribute('src', /benefit-home\.gif$/);
+    await page.waitForTimeout(500);
+    const entries = await page.evaluate(() => (window as unknown as { __lcp: string[] }).__lcp);
+    expect(entries.at(-1)).toMatch(/\.webp$/);
+  });
+});
