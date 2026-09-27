@@ -103,3 +103,31 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .matrix-bar span.neg { background: #e05252; }
 .matrix-score { text-align: right; font-variant-numeric: tabular-nums; }
 .matrix-note { grid-column: 1 / -1; font-size: 13px; color: var(--text-muted); margin: 0; }
+
+/* 프로젝트 목록 */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.filter { font: inherit; font-size: 13px; color: var(--text); background: transparent; border: 1px solid var(--accent-dark); border-radius: 4px; padding: 5px 12px; cursor: pointer; }
+.filter[aria-pressed='true'], .filter:hover { background: var(--accent-dark); }
+.stack-note { font-size: 14px; color: var(--text-muted); }
+.link-button { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+.cards { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.card-wrap { animation: rise 0.4s ease both; transition: opacity 0.3s ease; }
+.card-wrap.is-dim { opacity: 0.25; }
+.card { display: block; position: relative; height: 100%; background: var(--panel); border: 1px solid transparent; border-radius: 6px; overflow: hidden; text-decoration: none; transition: transform 0.25s ease; }
+.card:hover { transform: translateY(-5px); border-color: var(--accent-dark); }
+.card-media { position: relative; height: 300px; background: #0c2744; display: flex; justify-content: center; align-items: flex-start; padding-top: 16px; overflow: hidden; }
+.card-media::after, .card--text::after { content: attr(data-hint); position: absolute; right: 8px; bottom: 8px; font-size: 11px; padding: 3px 7px; border-radius: 3px; background: rgba(1, 14, 27, 0.8); color: var(--accent); opacity: 0; transition: opacity 0.2s; }
+.card:hover .card-media::after, .card--text:hover::after { opacity: 1; }
+.card-media:has(.card-diagram) { align-items: center; padding-top: 0; }
+.card-diagram { width: 100%; padding: 8px 12px; }
+.phone { width: 150px; height: 272px; border-radius: 18px; overflow: hidden; border: 5px solid #1e3550; background: #000; }
+.phone img { width: 100%; transition: transform 2.8s ease; }
+/* 틀 안쪽 높이는 262px(272px - 테두리 5px x 2). 마우스를 올리면 이미지 끝이 틀 아래에 닿을 때까지 넘긴다. */
+.card:hover .phone img { transform: translateY(calc(-100% + 262px)); }
+.card-body { padding: 12px 14px 16px; }
+.card-body h2 { font-size: 16px; margin: 4px 0 0; line-height: 1.4; }
+.card-body p { font-size: 13px; color: var(--text-muted); margin: 6px 0 0; line-height: 1.55; }
+@media (prefers-reduced-motion: reduce) {
+  .card:hover { transform: none; }
+  .card:hover .phone img { transform: none; }
+}
