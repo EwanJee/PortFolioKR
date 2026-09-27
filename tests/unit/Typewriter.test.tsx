@@ -39,6 +39,14 @@ describe('Typewriter', () => {
     expect(container.querySelector('.typed-visible')?.textContent).toContain('I will be A S');
   });
 
+  it('가장 긴 문구만큼 자리를 잡는 숨은 문구가 모든 줄에 있고, 화면 낭독기에는 숨긴다', () => {
+    mockReducedMotion(true);
+    const { container } = render(<Typewriter roles={['a Product Engineer', 'building order & claim systems']} />);
+    const sizers = [...container.querySelectorAll('.typed-sizer')];
+    expect(sizers.map((s) => s.textContent)).toEqual(['I will be A Server Developer|', 'I am a Product Engineer|', 'I am building order & claim systems|']);
+    expect(sizers.every((s) => s.getAttribute('aria-hidden') === 'true')).toBe(true);
+  });
+
   it('화면 낭독기에는 모든 역할을 한 번에 알려 준다', () => {
     mockReducedMotion(true);
     render(<Typewriter roles={['a Product Engineer', 'a Backend Developer']} />);

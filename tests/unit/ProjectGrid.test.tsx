@@ -44,6 +44,21 @@ describe('ProjectGrid', () => {
     expect(screen.getByText('제안·검토 중')).toBeTruthy();
   });
 
+  it('모두 보기는 주소만 바꾸고 화면 전환 기록 값은 남긴다(뒤로 가기가 동작하게)', () => {
+    window.history.replaceState({ index: 3, scrollX: 0, scrollY: 0 }, '', '/projects/?stack=Java');
+    render(<ProjectGrid items={items} />);
+    fireEvent.click(screen.getByRole('button', { name: '모두 보기' }));
+    expect(window.location.search).toBe('');
+    expect(window.history.state).toEqual({ index: 3, scrollX: 0, scrollY: 0 });
+  });
+
+  it('사례에 없는 기술 이름은 주소에 있어도 무시한다(임의 문구를 화면에 띄우지 않는다)', () => {
+    window.history.replaceState(null, '', `/projects/?stack=${encodeURIComponent('아무 문구')}`);
+    const { container } = render(<ProjectGrid items={items} />);
+    expect(screen.queryByText(/사용 사례만 밝게/)).toBeNull();
+    expect(container.querySelectorAll('.card-wrap.is-dim')).toHaveLength(0);
+  });
+
   it('주소의 stack 조건으로 흐리게 하고, 모두 보기로 해제한다', () => {
     window.history.replaceState(null, '', '/projects/?stack=Java');
     const { container } = render(<ProjectGrid items={items} />);

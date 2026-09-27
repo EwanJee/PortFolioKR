@@ -22,6 +22,40 @@ test('혜택홈: GIF를 재생하고 공개 주소를 새 탭으로 연다', asy
   await expect(link).toHaveAttribute('target', '_blank');
 });
 
+test('혜택홈: 움직이는 화면을 멈췄다가 다시 볼 수 있고, 버튼 포커스가 남는다', async ({ page }) => {
+  await page.goto('/projects/benefit-home/');
+  const img = page.locator('.case-media img');
+  await expect(img).toHaveAttribute('src', /benefit-home\.gif$/);
+  await page.getByRole('button', { name: '움직이는 화면 멈추기' }).click();
+  await expect(img).toHaveAttribute('src', /\.webp$/);
+  const play = page.getByRole('button', { name: '움직이는 화면 보기' });
+  await expect(play).toBeFocused();
+  await play.click();
+  await expect(img).toHaveAttribute('src', /benefit-home\.gif$/);
+});
+
+test('정산 원장: 재생형 그림의 끝에 닿아도 다음 버튼에 포커스가 남는다', async ({ page }) => {
+  await page.goto('/projects/settlement-ledger-dedup/');
+  const caption = page.locator('.diagram-caption');
+  await expect(caption).toContainText('1 / 5');
+  const next = page.getByRole('button', { name: '다음' });
+  await next.focus();
+  for (let i = 0; i < 4; i += 1) await page.keyboard.press('Enter');
+  await expect(caption).toContainText('5 / 5');
+  await expect(next).toBeFocused();
+  await expect(next).toHaveAttribute('aria-disabled', 'true');
+});
+
+test('알림 체계: 마지막 장면에서 예전 채널 상자는 흐리게 보인다', async ({ page }) => {
+  await page.goto('/projects/alerting/');
+  const caption = page.locator('.diagram-caption');
+  await expect(caption).toContainText(/^1 \/ \d+/);
+  const total = Number((await caption.textContent())?.match(/^1 \/ (\d+)/)?.[1]);
+  for (let i = 1; i < total; i += 1) await page.getByRole('button', { name: '다음' }).click();
+  await expect(caption).toContainText(`${total} / ${total}`);
+  await expect(page.locator('.diagram-node.is-muted')).toHaveCSS('opacity', '0.45');
+});
+
 test('정산 원장: 결정표와 재생형 그림이 동작한다', async ({ page }) => {
   await page.goto('/projects/settlement-ledger-dedup/');
   await expect(page.locator('.matrix-rank li.is-top')).toContainText('+0.55');
@@ -31,9 +65,18 @@ test('정산 원장: 결정표와 재생형 그림이 동작한다', async ({ pa
 
 test.describe('동작 줄이기', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } });
-  test('혜택홈: GIF 대신 정지 이미지와 재생 버튼', async ({ page }) => {
+  test('혜택홈: GIF 대신 정지 이미지와 재생 버튼, 누르면 재생하고 다시 멈출 수 있다', async ({ page }) => {
     await page.goto('/projects/benefit-home/');
-    await expect(page.getByRole('button', { name: '움직이는 화면 보기' })).toBeVisible();
+    const img = page.locator('.case-media img');
+    const play = page.getByRole('button', { name: '움직이는 화면 보기' });
+    await expect(play).toBeVisible();
+    await expect(img).toHaveAttribute('src', /\.webp$/);
+    await play.click();
+    await expect(img).toHaveAttribute('src', /benefit-home\.gif$/);
+    const stop = page.getByRole('button', { name: '움직이는 화면 멈추기' });
+    await expect(stop).toBeFocused();
+    await stop.click();
+    await expect(img).toHaveAttribute('src', /\.webp$/);
   });
 });
 
@@ -46,6 +89,7 @@ test.describe('스크립트 꺼짐', () => {
     });
     await page.goto('/projects/benefit-home/');
     await expect(page.locator('.case-media img')).toHaveAttribute('src', /\.webp$/);
+    await expect(page.getByRole('button', { name: /움직이는 화면/ })).toHaveCount(0);
     expect(gifs).toEqual([]);
   });
 });

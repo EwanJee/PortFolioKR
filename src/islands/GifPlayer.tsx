@@ -9,7 +9,7 @@ const MOTION_DELAY_MS = 500;
 
 // 처음 HTML에는 정지 이미지만 넣는다. 스크립트가 없으면 정지 이미지가 최종 상태다.
 // 큰 GIF는 페이지와 정지 이미지를 다 받은 뒤에 받는다. 먼저 받으면 첫 화면이 GIF를 기다리고, GIF가 가장 큰 요소로 잡힌다.
-// 동작 줄이기 사용자에게는 정지 이미지와 재생 버튼을 보여 준다.
+// 동작 줄이기 사용자에게는 정지 이미지로 시작한다. 누구나 버튼 하나로 재생과 멈춤을 오갈 수 있다(WCAG 2.2.2).
 export default function GifPlayer({ still, motion, alt }: Props) {
   const [mode, setMode] = useState<Mode>('still');
   const [pageLoaded, setPageLoaded] = useState(false);
@@ -44,8 +44,11 @@ export default function GifPlayer({ still, motion, alt }: Props) {
       <div className="phone phone--lg">
         <img ref={imgRef} src={mode === 'motion' && motion ? motion : still} alt={alt} fetchPriority="high" onLoad={() => setStillLoaded(true)} />
       </div>
-      {mode === 'paused' && (
-        <button type="button" className="play-button" onClick={() => setMode('motion')}>움직이는 화면 보기</button>
+      {/* 버튼을 새로 만들지 않고 글자만 바꿔야 누른 뒤에도 포커스가 남는다. 재생 대기 중('still')에 누르면 재생하지 않는다. */}
+      {motion && (
+        <button type="button" className="play-button" onClick={() => setMode(mode === 'paused' ? 'motion' : 'paused')}>
+          {mode === 'paused' ? '움직이는 화면 보기' : '움직이는 화면 멈추기'}
+        </button>
       )}
     </div>
   );

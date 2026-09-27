@@ -8,12 +8,15 @@ export default function ProjectGrid({ items }: { items: GridItem[] }) {
   const [stack, setStack] = useState<string | null>(null);
 
   useEffect(() => {
-    setStack(readStackParam(window.location.search));
-  }, []);
+    // 사례에 쓰인 기술 이름만 받는다. 아무 문구나 받으면 링크 하나로 이 사이트에 임의 문구를 띄울 수 있다.
+    const value = readStackParam(window.location.search);
+    setStack(value && items.some((item) => item.stack.includes(value)) ? value : null);
+  }, [items]);
 
   const clearStack = () => {
     setStack(null);
-    window.history.replaceState(null, '', window.location.pathname);
+    // 화면 전환(ClientRouter)이 기록에 넣어 둔 값을 지우면 뒤로 가기가 이 페이지로 돌아오지 못하므로 그대로 둔다.
+    window.history.replaceState(window.history.state, '', window.location.pathname);
   };
 
   return (

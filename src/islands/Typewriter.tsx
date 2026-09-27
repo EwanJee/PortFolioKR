@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { finalState, typewriterSteps, type TypeState } from '../lib/typewriter';
+import { FINAL_PREFIX, OPENING_PREFIX, OPENING_ROLE, finalState, typewriterSteps, type TypeState } from '../lib/typewriter';
 
 type Props = { roles: string[] };
 
@@ -35,6 +35,14 @@ export default function Typewriter({ roles }: Props) {
         <span className="typed-role">{state.role}</span>
         <span className={state.blinking ? 'typed-cursor is-blinking' : 'typed-cursor'}>|</span>
       </span>
+      {/* 입력할 수 있는 모든 줄을 보이지 않게 겹쳐 두어, 칸 높이를 가장 긴 줄에 맞춘다(global.css의 .typed-sizer). */}
+      {[[OPENING_PREFIX, OPENING_ROLE], ...roles.map((role) => [FINAL_PREFIX, role])].map(([prefix, role]) => (
+        <span key={`${prefix}${role}`} className="typed-sizer" aria-hidden="true">
+          {prefix}
+          <span className="typed-role">{role}</span>
+          <span className="typed-cursor">|</span>
+        </span>
+      ))}
     </p>
   );
 }

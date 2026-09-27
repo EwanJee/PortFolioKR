@@ -28,6 +28,23 @@ describe('StepDiagram', () => {
     expect(screen.getByText(/2 \/ 5\./)).toBeTruthy();
   });
 
+  it('처음과 끝에서 이전·다음 버튼은 누를 수 없음만 알리고 포커스는 받을 수 있게 둔다', () => {
+    mockReducedMotion(false);
+    render(<StepDiagram id="race-condition" mode="player" />);
+    const prev = screen.getByRole('button', { name: '이전' });
+    const next = screen.getByRole('button', { name: '다음' });
+    // disabled는 포커스를 빼앗으므로 쓰지 않는다.
+    expect(prev.hasAttribute('disabled')).toBe(false);
+    expect(prev.getAttribute('aria-disabled')).toBe('true');
+    fireEvent.click(prev);
+    expect(screen.getByText(/1 \/ 5\./)).toBeTruthy();
+    for (let i = 0; i < 5; i += 1) fireEvent.click(next);
+    expect(screen.getByText(/5 \/ 5\./)).toBeTruthy();
+    expect(next.hasAttribute('disabled')).toBe(false);
+    expect(next.getAttribute('aria-disabled')).toBe('true');
+    expect(prev.getAttribute('aria-disabled')).toBe('false');
+  });
+
   it('유니크 키를 켜면 마지막 단계가 거절이 된다', () => {
     mockReducedMotion(false);
     render(<StepDiagram id="race-condition" mode="player" />);

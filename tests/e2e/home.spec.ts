@@ -8,6 +8,27 @@ test('움직임: 지금 사이트 문구로 시작해 I am으로 고친다', asy
   await expect(visible).toContainText('I am a', { timeout: 12000 });
 });
 
+test('타이핑 문구가 여러 줄로 넘어가도 이름과 메뉴가 움직이지 않는다', async ({ page }) => {
+  await page.goto('/');
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 800 });
+    const tops = await page.evaluate(() => {
+      const visible = document.querySelector('.typed-visible');
+      const name = document.querySelector('.hero-name');
+      const nav = document.querySelector('nav[aria-label="주 메뉴"]');
+      const spoken = document.querySelector('.typed .visually-hidden')?.textContent ?? '';
+      if (!visible || !name || !nav) throw new Error('첫 화면 요소가 없습니다');
+      const lines = [['I ', ''], ['I will be A ', 'Server Developer'], ...spoken.replace(/^I am /, '').split(', ').map((role) => ['I am ', role])];
+      // 한 번의 실행 안에서 글자를 바꾸고 바로 위치를 재므로, 타이핑 효과가 끼어들지 못한다.
+      return lines.map(([prefix, role]) => {
+        visible.innerHTML = `${prefix}<span class="typed-role">${role}</span><span class="typed-cursor">|</span>`;
+        return [Math.round(name.getBoundingClientRect().top), Math.round(nav.getBoundingClientRect().top)];
+      });
+    });
+    for (const t of tops) expect(t, `폭 ${width}px`).toEqual(tops[0]);
+  }
+});
+
 test.describe('동작 줄이기', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } });
   test('첫 역할에 멈춰 있다', async ({ page }) => {

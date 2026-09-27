@@ -67,8 +67,9 @@ export default function StepDiagram({ id, mode }: Props) {
           <p className="diagram-caption" aria-live="polite">{`${index + 1} / ${steps.length}. ${step.caption}`}</p>
           <div className="diagram-controls">
             <button type="button" onClick={() => setIndex(0)}>처음</button>
-            <button type="button" onClick={() => setIndex((i) => prevIndex(i))} disabled={index === 0}>이전</button>
-            <button type="button" onClick={() => setIndex((i) => nextIndex(i, steps.length, false))} disabled={index === steps.length - 1}>다음</button>
+            {/* disabled는 누르던 버튼의 포커스를 빼앗으므로, 끝에서는 aria-disabled로 알리기만 한다(눌러도 제자리). */}
+            <button type="button" onClick={() => setIndex((i) => prevIndex(i))} aria-disabled={index === 0}>이전</button>
+            <button type="button" onClick={() => setIndex((i) => nextIndex(i, steps.length, false))} aria-disabled={index === steps.length - 1}>다음</button>
             {spec.variant && (
               <label className="diagram-toggle">
                 <input type="checkbox" checked={useVariant} onChange={(e) => setUseVariant(e.target.checked)} /> {spec.variant.label}

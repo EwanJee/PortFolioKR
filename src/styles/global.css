@@ -15,7 +15,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 60px var(--edge); }
 .hero-name { font-size: clamp(38px, 6vw, 54px); font-weight: 700; margin: 0; letter-spacing: -0.01em; }
 .hero-name small { font-family: var(--font-display); font-size: 0.37em; font-weight: 500; color: var(--text-faint); margin-left: 12px; }
-.typed { font-family: var(--font-display); font-size: 24px; margin: 18px 0 0; min-height: 40px; white-space: pre-wrap; }
+.typed { font-family: var(--font-display); font-size: 24px; margin: 18px 0 0; min-height: 40px; white-space: pre-wrap; display: grid; }
+/* 보이는 문구와 숨은 문구들을 한 칸에 겹친다. 칸 높이가 가장 긴 문구에 맞춰지므로, 문구가 두세 줄로 넘어가도 이름과 메뉴가 움직이지 않는다. */
+.typed-visible, .typed-sizer { grid-area: 1 / 1; }
+.typed-sizer { visibility: hidden; }
 .typed-role { color: var(--accent); border-bottom: 2px solid var(--accent-dark); padding-bottom: 6px; }
 .typed-cursor { opacity: 1; }
 .typed-cursor.is-blinking { animation: typed-blink 0.7s infinite; }
@@ -73,7 +76,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 /* 구조 그림 */
 .diagram { margin: 0; width: 100%; }
 .diagram svg { width: 100%; height: auto; display: block; font-family: var(--font-sans); font-size: 12px; }
-.diagram-node { animation: node-in 0.3s ease both; }
+/* 등장 효과는 끝난 뒤 값을 붙잡지 않는다(backwards). 붙잡으면 is-muted, is-dim 같은 흐림이 불투명도 1에 덮인다. */
+.diagram-node { animation: node-in 0.3s ease backwards; }
 .diagram-node rect { fill: #12324f; stroke: rgba(255, 255, 255, 0.25); }
 .diagram-node text { fill: #ffffff; }
 .diagram-node.is-active rect { stroke: var(--accent); stroke-width: 2; }
@@ -84,7 +88,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .diagram-caption { font-size: 14px; color: var(--text-muted); margin: 10px 0 8px; min-height: 3em; }
 .diagram-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .diagram-controls button { font: inherit; font-size: 13px; color: var(--text); background: transparent; border: 1px solid var(--accent-dark); border-radius: 4px; padding: 5px 12px; cursor: pointer; }
-.diagram-controls button:disabled { opacity: 0.4; cursor: default; }
+.diagram-controls button[aria-disabled='true'] { opacity: 0.4; cursor: default; }
 .diagram-toggle { font-size: 13px; color: var(--text-muted); display: inline-flex; gap: 6px; align-items: center; }
 @keyframes node-in { from { opacity: 0; } to { opacity: 1; } }
 
@@ -112,7 +116,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .stack-note { font-size: 14px; color: var(--text-muted); }
 .link-button { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
 .cards { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
-.card-wrap { animation: rise 0.4s ease both; transition: opacity 0.3s ease; }
+.card-wrap { animation: rise 0.4s ease backwards; transition: opacity 0.3s ease; }
 .card-wrap.is-dim { opacity: 0.25; }
 .card { display: block; position: relative; height: 100%; background: var(--panel); border: 1px solid transparent; border-radius: 6px; overflow: hidden; text-decoration: none; transition: transform 0.25s ease; }
 .card:hover { transform: translateY(-5px); border-color: var(--accent-dark); }
@@ -142,6 +146,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .phone--lg img { transition: none; }
 .gif-player { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .play-button { font: inherit; font-size: 13px; color: var(--text); background: var(--accent-dark); border: 0; border-radius: 4px; padding: 7px 14px; cursor: pointer; }
+/* 버튼은 처음 HTML부터 자리를 잡아 두고(살아날 때 아래 내용이 밀리지 않게), 스크립트가 없으면 숨긴다. */
+:root:not(.js) .play-button { display: none; }
 .case-team { margin: 0; }
 .case-info h1 { font-size: 28px; margin: 6px 0 0; line-height: 1.35; }
 .case-meta { font-size: 14px; color: var(--text-faint); margin: 8px 0 0; }
