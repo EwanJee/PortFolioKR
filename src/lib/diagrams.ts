@@ -51,7 +51,7 @@ export const DIAGRAMS: Record<DiagramId, DiagramSpec> = {
     height: 246,
     nodes: [
       { id: 'data', label: '주문, 회원 데이터', x: 100, y: 10, w: 160, h: 30 },
-      { id: 'views', label: '핵심 지표 뷰 3개', x: 100, y: 58, w: 160, h: 30 },
+      { id: 'views', label: '지표 뷰 3개', x: 100, y: 58, w: 160, h: 30 },
       { id: 'detect', label: '이상 신호 탐지', x: 100, y: 106, w: 160, h: 30 },
       { id: 'code', label: '수치와 원인: 코드', x: 10, y: 156, w: 160, h: 30 },
       { id: 'llm', label: '문장: LLM', x: 190, y: 156, w: 160, h: 30 },
@@ -67,9 +67,9 @@ export const DIAGRAMS: Record<DiagramId, DiagramSpec> = {
     ],
     steps: [
       { caption: '주문과 회원 데이터에서 시작합니다.', show: ['data'], active: ['data'] },
-      { caption: '요구사항 12개를 핵심 지표 3개로 줄여 뷰로 만듭니다.', show: ['data', 'views'], active: ['views'] },
+      { caption: '요구사항 후보 12개에서 고른 지표 5개를 뷰 3개로 만듭니다.', show: ['data', 'views'], active: ['views'] },
       { caption: '평소와 다른 움직임(이상 신호)을 찾습니다.', show: ['data', 'views', 'detect'], active: ['detect'] },
-      { caption: '수치와 원인은 코드가 정하고, LLM은 문장만 다듬습니다.', show: ['data', 'views', 'detect', 'code', 'llm'], active: ['code', 'llm'] },
+      { caption: '수치와 원인 후보는 휴리스틱 규칙으로 코드가 정하고, LLM은 문장만 다듬습니다.', show: ['data', 'views', 'detect', 'code', 'llm'], active: ['code', 'llm'] },
       { caption: '정리한 문장을 알림으로 보냅니다.', show: ['data', 'views', 'detect', 'code', 'llm', 'alert'], active: ['alert'] },
     ],
   },

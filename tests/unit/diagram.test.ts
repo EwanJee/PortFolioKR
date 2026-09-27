@@ -40,6 +40,14 @@ describe('그림 정의', () => {
     ]);
   });
 
+  it('Global 그림은 지표 수를 사례 본문과 같게(후보 12개 중 5개, 뷰 3개) 적는다', () => {
+    const spec = DIAGRAMS['signal-pipeline'];
+    const captions = spec.steps.map((s) => s.caption).join(' ');
+    expect(captions).not.toContain('핵심 지표 3개');
+    expect(captions).toContain('지표 5개');
+    expect(spec.nodes.find((n) => n.id === 'views')?.label).toBe('지표 뷰 3개');
+  });
+
   it('단계에 edges가 있으면 그것만 보인다', () => {
     const spec = DIAGRAMS['privacy-flow'];
     expect(visibleEdges(spec, spec.steps[1]).every((e) => e.from === 'api' || e.to === 'api')).toBe(true);

@@ -28,6 +28,12 @@ test('사례 본문: 모든 사례에 기록과 자동화가 있고, 요청한 �
   await expect(body.locator('h2', { hasText: '배운 점' })).toHaveCount(1);
 });
 
+test('Global 사례의 핵심 칸은 본문과 같은 지표 수(후보 12개 → 첫 단계 5개)를 보여 준다', async ({ page }) => {
+  await page.goto('/projects/japan-retention-mvp/');
+  await expect(page.locator('.case-cells')).toContainText('12 → 5');
+  await expect(page.locator('main')).not.toContainText('12 → 3');
+});
+
 test('알림 사례는 사내 서비스 이름 대신 "리텐션 서비스 3개"로 적는다', async ({ page }) => {
   await page.goto('/projects/alerting/');
   const body = page.locator('main');
