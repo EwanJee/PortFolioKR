@@ -54,5 +54,8 @@ const ogUrl = new URL(ogImage, Astro.site);
     });
   })();
 </script>
-{/* View Transitions를 지원하지 않는 브라우저는 애니메이션 없이 페이지만 바꾼다(설계 4장). */}
-<ClientRouter fallback="none" />
+<script>
+  import '../scripts/navigation';
+</script>
+{/* 화면 전환 효과 지원 여부와 관계없이 문서·방문 기록을 즉시 교체한다. */}
+<ClientRouter fallback="swap" />
