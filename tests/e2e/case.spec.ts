@@ -53,8 +53,8 @@ test('사례 페이지 위쪽에 프로젝트 목록으로 돌아가는 링크�
   await expect(page.locator('h1')).toHaveText('PROJECTS');
 });
 
-test('혜택홈: GIF를 재생하고 공개 주소를 새 탭으로 연다', async ({ page }) => {
-  const gif = page.waitForRequest(/\/media\/benefit-home\.gif$/);
+test('혜택홈: 움직이는 이미지를 재생하고 공개 주소를 새 탭으로 연다', async ({ page }) => {
+  const gif = page.waitForRequest(/\/media\/benefit-home\.webp$/);
   await page.goto('/projects/benefit-home/');
   await gif;
   const link = page.getByRole('link', { name: '혜택홈 열어 보기' });
@@ -65,13 +65,13 @@ test('혜택홈: GIF를 재생하고 공개 주소를 새 탭으로 연다', asy
 test('혜택홈: 움직이는 화면을 멈췄다가 다시 볼 수 있고, 버튼 포커스가 남는다', async ({ page }) => {
   await page.goto('/projects/benefit-home/');
   const img = page.locator('.case-media img');
-  await expect(img).toHaveAttribute('src', /benefit-home\.gif$/);
+  await expect(img).toHaveAttribute('src', /benefit-home\.webp$/);
   await page.getByRole('button', { name: '움직이는 화면 멈추기' }).click();
-  await expect(img).toHaveAttribute('src', /\.webp$/);
+  await expect(img).toHaveAttribute('src', /\/_astro\/.+\.webp$/);
   const play = page.getByRole('button', { name: '움직이는 화면 보기' });
   await expect(play).toBeFocused();
   await play.click();
-  await expect(img).toHaveAttribute('src', /benefit-home\.gif$/);
+  await expect(img).toHaveAttribute('src', /benefit-home\.webp$/);
 });
 
 test('정산 원장: 재생형 그림의 끝에 닿아도 다음 버튼에 포커스가 남는다', async ({ page }) => {
@@ -105,30 +105,30 @@ test('정산 원장: 결정표와 재생형 그림이 동작한다', async ({ pa
 
 test.describe('동작 줄이기', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } });
-  test('혜택홈: GIF 대신 정지 이미지와 재생 버튼, 누르면 재생하고 다시 멈출 수 있다', async ({ page }) => {
+  test('혜택홈: 움직이는 이미지 대신 정지 이미지와 재생 버튼, 누르면 재생하고 다시 멈출 수 있다', async ({ page }) => {
     await page.goto('/projects/benefit-home/');
     const img = page.locator('.case-media img');
     const play = page.getByRole('button', { name: '움직이는 화면 보기' });
     await expect(play).toBeVisible();
-    await expect(img).toHaveAttribute('src', /\.webp$/);
+    await expect(img).toHaveAttribute('src', /\/_astro\/.+\.webp$/);
     await play.click();
-    await expect(img).toHaveAttribute('src', /benefit-home\.gif$/);
+    await expect(img).toHaveAttribute('src', /benefit-home\.webp$/);
     const stop = page.getByRole('button', { name: '움직이는 화면 멈추기' });
     await expect(stop).toBeFocused();
     await stop.click();
-    await expect(img).toHaveAttribute('src', /\.webp$/);
+    await expect(img).toHaveAttribute('src', /\/_astro\/.+\.webp$/);
   });
 });
 
 test.describe('스크립트 꺼짐', () => {
   test.use({ javaScriptEnabled: false });
-  test('혜택홈: 정지 이미지를 보여 주고 GIF는 불러오지 않는다', async ({ page }) => {
+  test('혜택홈: 정지 이미지를 보여 주고 움직이는 이미지는 불러오지 않는다', async ({ page }) => {
     const gifs: string[] = [];
     page.on('request', (r) => {
-      if (r.url().endsWith('.gif')) gifs.push(r.url());
+      if (r.url().includes('/media/')) gifs.push(r.url());
     });
     await page.goto('/projects/benefit-home/');
-    await expect(page.locator('.case-media img')).toHaveAttribute('src', /\.webp$/);
+    await expect(page.locator('.case-media img')).toHaveAttribute('src', /\/_astro\/.+\.webp$/);
     await expect(page.getByRole('button', { name: /움직이는 화면/ })).toHaveCount(0);
     expect(gifs).toEqual([]);
   });
@@ -151,7 +151,7 @@ test('사례 카드를 누르면 사례 페이지로 넘어간다', async ({ pag
 
 test.describe('휴대폰(픽셀 배율 1.75)', () => {
   test.use({ viewport: { width: 412, height: 823 }, deviceScaleFactor: 1.75, isMobile: true, hasTouch: true });
-  test('혜택홈: 정지 이미지가 GIF로 바뀌어도 가장 큰 요소(LCP)는 먼저 그린 정지 이미지로 남는다', async ({ page }) => {
+  test('혜택홈: 정지 이미지가 움직이는 이미지로 바뀌어도 가장 큰 요소(LCP)는 먼저 그린 정지 이미지로 남는다', async ({ page }) => {
     await page.addInitScript(() => {
       (window as unknown as { __lcp: string[] }).__lcp = [];
       new PerformanceObserver((list) => {
@@ -159,9 +159,9 @@ test.describe('휴대폰(픽셀 배율 1.75)', () => {
       }).observe({ type: 'largest-contentful-paint', buffered: true });
     });
     await page.goto('/projects/benefit-home/');
-    await expect(page.locator('.gif-player img')).toHaveAttribute('src', /benefit-home\.gif$/);
+    await expect(page.locator('.gif-player img')).toHaveAttribute('src', /benefit-home\.webp$/);
     await page.waitForTimeout(500);
     const entries = await page.evaluate(() => (window as unknown as { __lcp: string[] }).__lcp);
-    expect(entries.at(-1)).toMatch(/\.webp$/);
+    expect(entries.at(-1)).toMatch(/\/_astro\/.+\.webp$/);
   });
 });

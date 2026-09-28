@@ -1,5 +1,5 @@
 ---
-import CountUp from '../islands/CountUp';
+import CountUp from './CountUp.astro';
 import type { Segment } from '../data/career';
 
 interface Props {
@@ -9,4 +9,4 @@ interface Props {
 // 글자와 움직이는 숫자(CountUp)가 섞인 경력 문장을 그린다.
 const { parts } = Astro.props;
 ---
-{parts.map((p) => (typeof p === 'string' ? p : <CountUp client:visible to={p.count} />))}
+{parts.map((p) => (typeof p === 'string' ? p : <CountUp to={p.count} />))}

@@ -17,7 +17,7 @@ if (!repo || !existsSync(join(repo, 'dist', 'index.html'))) {
 const ANALYTICS = /amplitude|googletagmanager|google-analytics/i;
 const work = mkdtempSync(join(tmpdir(), 'chatbot-'));
 const still = join(work, 'still.png');
-mkdirSync('public/media', { recursive: true });
+mkdirSync('src/assets/motion', { recursive: true });
 mkdirSync('src/assets/cases', { recursive: true });
 
 const server = spawn('python3', ['-m', 'http.server', '4399', '--directory', join(repo, 'dist')], { stdio: 'ignore' });
@@ -61,7 +61,9 @@ const video = readdirSync(work).find((f) => f.endsWith('.webm'));
 execFileSync('ffmpeg', [
   '-nostdin', '-v', 'error', '-y', '-ss', '1', '-i', join(work, video),
   '-vf', 'fps=10,scale=240:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=96[p];[b][p]paletteuse=dither=bayer:bayer_scale=4',
-  'public/media/chatbot.gif',
+  'src/assets/motion/chatbot.gif',
 ], { stdio: 'inherit' });
 execFileSync('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-i', still, '-q:v', '3', 'src/assets/cases/chatbot.jpg'], { stdio: 'inherit' });
-console.log('chatbot: public/media/chatbot.gif, src/assets/cases/chatbot.jpg');
+console.log('chatbot: src/assets/motion/chatbot.gif, src/assets/cases/chatbot.jpg');
+
+execFileSync(process.execPath, ['scripts/media/optimize.mjs'], { stdio: 'inherit' });

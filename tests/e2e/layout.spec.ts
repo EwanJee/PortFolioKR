@@ -14,10 +14,18 @@ test('첫 화면: 이름, 한 줄 소개, 메뉴 6개, 소셜 4개, 일하는 �
   await expect(page.locator('.hero-work')).toContainText('효율과 기록');
 });
 
-test('첫 화면은 화면 그리기를 막는 외부 CSS 요청 없이 스타일을 싣는다', async ({ page }) => {
+test('공통 스타일은 한 번 받고 홈과 경력 사이에서 다시 사용한다', async ({ page }) => {
+  const stylesheets: string[] = [];
+  page.on('request', (request) => {
+    if (request.resourceType() === 'stylesheet') stylesheets.push(request.url());
+  });
   await page.goto('/');
-  await expect(page.locator('link[rel="stylesheet"]')).toHaveCount(0);
-  expect(await page.locator('style').count()).toBeGreaterThan(0);
+  await expect(page.locator('.hero-name')).toHaveCSS('font-weight', '700');
+  const initial = [...stylesheets];
+  expect(initial).toHaveLength(1);
+  await page.getByRole('link', { name: 'Career', exact: true }).click();
+  await expect(page.locator('.bar')).toHaveCSS('background-color', 'rgb(9, 32, 58)');
+  expect(stylesheets).toEqual(initial);
 });
 
 const bodyFont = (page: import('@playwright/test').Page) => page.evaluate(() => getComputedStyle(document.body).fontFamily);

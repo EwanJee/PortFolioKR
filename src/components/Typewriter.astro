@@ -1,0 +1,19 @@
+---
+import { FINAL_PREFIX, finalState } from '../lib/typewriter';
+
+interface Props { roles: string[] }
+const { roles } = Astro.props;
+const state = finalState(roles);
+---
+<portfolio-typewriter data-roles={JSON.stringify(roles)}>
+  <p class="typed">
+    <span class="visually-hidden">{`I am ${roles.join(', ')}`}</span>
+    <span class="typed-visible" aria-hidden="true"><span class="typed-prefix">{state.prefix}</span><span class="typed-role">{state.role}</span><span class="typed-cursor">|</span></span>
+    {roles.map((role) => (
+      <span class="typed-sizer" aria-hidden="true">{FINAL_PREFIX}<span class="typed-role">{role}</span><span class="typed-cursor">|</span></span>
+    ))}
+  </p>
+</portfolio-typewriter>
+<script>
+  import '../scripts/typewriter';
+</script>
