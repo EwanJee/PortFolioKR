@@ -4,6 +4,7 @@ import '../../src/scripts/countup';
 
 let reveal: () => void;
 const disconnect = vi.fn();
+const observe = vi.fn();
 beforeEach(() => {
   vi.useFakeTimers();
   vi.stubGlobal('matchMedia', () => ({ matches: false }));
@@ -11,12 +12,13 @@ beforeEach(() => {
     constructor(callback: IntersectionObserverCallback) {
       reveal = () => callback([{ isIntersecting: true } as IntersectionObserverEntry], this as unknown as IntersectionObserver);
     }
-    observe() {}
+    observe = observe;
     disconnect = disconnect;
   });
 });
 afterEach(() => {
   document.body.replaceChildren();
+  document.documentElement.removeAttribute('data-instant-navigation');
   vi.useRealTimers();
   vi.unstubAllGlobals();
   vi.clearAllMocks();
@@ -67,6 +69,15 @@ describe('가벼운 화면 효과', () => {
     vi.advanceTimersByTime(1300);
     expect(el.textContent).toBe('17');
     expect(disconnect).toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('메뉴로 들어온 숫자는 관찰자나 타이머 없이 최종 값을 바로 유지한다', () => {
+    document.documentElement.setAttribute('data-instant-navigation', '');
+    const el = mountCountup();
+    vi.advanceTimersByTime(2000);
+    expect(el.textContent).toBe('17');
+    expect(observe).not.toHaveBeenCalled();
     expect(vi.getTimerCount()).toBe(0);
   });
 

@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/test';
 
-test('홈과 경력을 오가도 효과가 동작하고 React 실행 코드를 요청하지 않는다', async ({ page }) => {
+test('메뉴 이동의 경력 숫자는 바로 보이고 홈 타이핑은 재시작하며 React를 요청하지 않는다', async ({ page }) => {
   const scripts: string[] = [];
   page.on('request', (request) => {
     if (request.resourceType() === 'script') scripts.push(request.url());
   });
   await page.goto('/');
-  // HTML의 최종 값만 보고 통과하지 않도록 0에서 시작하는 실제 변화를 기록한다.
+  // 이동 뒤 숫자가 0으로 초기화됐다가 돌아오는 지연이 없는지 기록한다.
   await page.evaluate(() => {
     const state = window as typeof window & { countValues: string[] };
     state.countValues = [];
@@ -17,9 +17,10 @@ test('홈과 경력을 오가도 효과가 동작하고 React 실행 코드를 �
     observer.observe(document.documentElement, { childList: true, characterData: true, subtree: true });
   });
   await page.getByRole('link', { name: 'Career', exact: true }).click();
-  await expect.poll(() => page.evaluate(() => (window as typeof window & { countValues: string[] }).countValues.includes('0'))).toBe(true);
+  await expect.poll(() => page.evaluate(() => (window as typeof window & { countValues: string[] }).countValues.length)).toBeGreaterThan(0);
   const target = await page.locator('portfolio-countup').first().getAttribute('data-to');
   await expect(page.locator('.num').first()).toHaveText(target!);
+  expect(await page.evaluate(() => (window as typeof window & { countValues: string[] }).countValues)).not.toContain('0');
   await page.getByRole('link', { name: 'Home', exact: true }).click();
   await expect(page.locator('.typed-visible')).toContainText('I am a Backend', { timeout: 12000 });
   await expect(page.locator('astro-island')).toHaveCount(0);

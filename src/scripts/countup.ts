@@ -7,7 +7,8 @@ class PortfolioCountup extends HTMLElement {
   private finish = 0;
 
   connectedCallback() {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // 메뉴 이동에서는 이미 HTML에 있는 최종 값을 유지해 내용을 기다리게 하지 않는다.
+    if (document.documentElement.hasAttribute('data-instant-navigation') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     this.observer = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       this.observer?.disconnect();
