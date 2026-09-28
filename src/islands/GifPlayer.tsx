@@ -42,7 +42,7 @@ export default function GifPlayer({ still, motion, alt }: Props) {
   return (
     <div className="gif-player">
       <div className="phone phone--lg">
-        <img ref={imgRef} src={mode === 'motion' && motion ? motion : still} alt={alt} fetchPriority="high" onLoad={() => setStillLoaded(true)} />
+        <img ref={imgRef} src={mode === 'motion' && motion ? motion : still} alt={alt} fetchPriority={mode === 'motion' ? 'low' : 'high'} onLoad={() => setStillLoaded(true)} />
       </div>
       {/* 버튼을 새로 만들지 않고 글자만 바꿔야 누른 뒤에도 포커스가 남는다. 재생 대기 중('still')에 누르면 재생하지 않는다. */}
       {motion && (

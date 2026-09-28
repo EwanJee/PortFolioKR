@@ -47,6 +47,7 @@ describe('GifPlayer', () => {
     expect(src()).toBe('/s.webp');
     act(() => vi.advanceTimersByTime(1));
     expect(src()).toBe('/media/a.gif');
+    expect(screen.getByAltText('화면').getAttribute('fetchpriority')).toBe('low');
   });
 
   it('이미 다 받은 페이지로 넘어오면 정지 이미지를 받은 뒤에 GIF로 바꾼다', () => {

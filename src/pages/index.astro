@@ -1,11 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Typewriter from '../islands/Typewriter';
+import Typewriter from '../components/Typewriter.astro';
 import { profile } from '../data/profile';
 import { LEGACY_HASH_TARGETS } from '../lib/legacy-redirects';
 ---
 <BaseLayout title="지예환 | Back-end Engineer" description={profile.intro} variant="hero">
-  <Typewriter slot="typed" client:load roles={[...profile.roles]} />
+  <Typewriter slot="typed" roles={[...profile.roles]} />
   <script is:inline define:vars={{ targets: LEGACY_HASH_TARGETS }}>
     const target = targets[window.location.hash];
     if (target) window.location.replace(target);

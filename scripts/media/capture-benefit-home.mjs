@@ -11,7 +11,7 @@ const URL = 'https://www.musinsa.com/events/main';
 const ANALYTICS = /amplitude|googletagmanager|google-analytics|doubleclick|braze|facebook|criteo/i;
 const work = mkdtempSync(join(tmpdir(), 'bh-'));
 const tall = join(work, 'tall.png');
-mkdirSync('public/media', { recursive: true });
+mkdirSync('src/assets/motion', { recursive: true });
 mkdirSync('src/assets/cases', { recursive: true });
 
 const browser = await chromium.launch({ channel: 'chrome' });
@@ -33,8 +33,10 @@ await browser.close();
 execFileSync('ffmpeg', [
   '-nostdin', '-v', 'error', '-y', '-loop', '1', '-framerate', '10', '-t', '6.5', '-i', tall,
   '-vf', "crop=390:844:0:'if(lt(t\\,1)\\,0\\,min((t-1)*320\\,ih-844))',scale=240:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=96[p];[b][p]paletteuse=dither=bayer:bayer_scale=4",
-  'public/media/benefit-home.gif',
+  'src/assets/motion/benefit-home.gif',
 ], { stdio: 'inherit' });
 // 정지 이미지: 화면 두 장 높이(1688px). 카드에서는 마우스를 올리면 아래로 넘어가고, 사례 페이지에서는 윗부분만 보인다.
 execFileSync('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-i', tall, '-vf', 'crop=390:1688:0:0', '-q:v', '3', 'src/assets/cases/benefit-home.jpg'], { stdio: 'inherit' });
-console.log('benefit-home: public/media/benefit-home.gif, src/assets/cases/benefit-home.jpg');
+console.log('benefit-home: src/assets/motion/benefit-home.gif, src/assets/cases/benefit-home.jpg');
+
+execFileSync(process.execPath, ['scripts/media/optimize.mjs'], { stdio: 'inherit' });

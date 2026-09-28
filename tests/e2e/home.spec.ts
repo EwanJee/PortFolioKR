@@ -1,5 +1,31 @@
 import { expect, test } from '@playwright/test';
 
+test('홈과 경력을 오가도 효과가 동작하고 React 실행 코드를 요청하지 않는다', async ({ page }) => {
+  const scripts: string[] = [];
+  page.on('request', (request) => {
+    if (request.resourceType() === 'script') scripts.push(request.url());
+  });
+  await page.goto('/');
+  // HTML의 최종 값만 보고 통과하지 않도록 0에서 시작하는 실제 변화를 기록한다.
+  await page.evaluate(() => {
+    const state = window as typeof window & { countValues: string[] };
+    state.countValues = [];
+    const observer = new MutationObserver(() => {
+      const value = document.querySelector('portfolio-countup .num')?.textContent;
+      if (value) state.countValues.push(value);
+    });
+    observer.observe(document.documentElement, { childList: true, characterData: true, subtree: true });
+  });
+  await page.getByRole('link', { name: 'Career', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as typeof window & { countValues: string[] }).countValues.includes('0'))).toBe(true);
+  const target = await page.locator('portfolio-countup').first().getAttribute('data-to');
+  await expect(page.locator('.num').first()).toHaveText(target!);
+  await page.getByRole('link', { name: 'Home', exact: true }).click();
+  await expect(page.locator('.typed-visible')).toContainText('I am a Backend', { timeout: 12000 });
+  await expect(page.locator('astro-island')).toHaveCount(0);
+  expect(scripts.some((url) => /\/(?:client|jsx-runtime|index)\.[^/]+\.js$/.test(url))).toBe(false);
+});
+
 // 화면 낭독기용 전체 문구(.visually-hidden)에도 "I am a"가 있으므로, 보이는 글자(.typed-visible)만 확인한다.
 test('움직임: 첫 역할에서 시작해 다음 역할로 넘어가고, I will be 문구는 없다', async ({ page }) => {
   await page.goto('/');

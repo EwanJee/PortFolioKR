@@ -1,0 +1,8 @@
+---
+interface Props { to: number }
+const { to } = Astro.props;
+---
+<portfolio-countup data-to={to}><span class="num">{to}</span></portfolio-countup>
+<script>
+  import '../scripts/countup';
+</script>
