@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { isCurrent, NAV } from '../../src/lib/nav';
 
 describe('NAV', () => {
-  it('메뉴는 6개다', () => {
-    expect(NAV.map((n) => n.label)).toEqual(['Home', 'About', 'Career', 'Projects', 'Troubleshooting', 'Contact']);
+  it('Resume을 포함한 메뉴는 7개다', () => {
+    expect(NAV.map((n) => n.label)).toEqual(['Home', 'About', 'Career', 'Projects', 'Troubleshooting', 'Resume', 'Contact']);
   });
 });
 

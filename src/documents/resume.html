@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>지예환 | Back-end Engineer</title>
+  <style>
+    @font-face { font-family: Resume; src: url('../../node_modules/pretendard/dist/web/static/woff2/Pretendard-Regular.woff2'); font-weight: 400; }
+    @font-face { font-family: Resume; src: url('../../node_modules/pretendard/dist/web/static/woff2/Pretendard-SemiBold.woff2'); font-weight: 600; }
+    @font-face { font-family: Resume; src: url('../../node_modules/pretendard/dist/web/static/woff2/Pretendard-Bold.woff2'); font-weight: 700; }
+    @page { size: A4; margin: 0; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #243244; font-family: Resume, sans-serif; font-size: 9.5pt; line-height: 1.46; word-break: keep-all; overflow-wrap: break-word; }
+    .sheet { width: 210mm; height: 297mm; padding: 14mm 16mm 17mm; position: relative; break-after: page; }
+    .sheet:last-child { break-after: auto; }
+    .sheet + .sheet h2 { margin-top: 8pt; }
+    .sheet + .sheet .entry { margin-top: 6pt; }
+    .sheet + .sheet li { margin-bottom: 2pt; }
+    h1, h2, h3, h4, p, ul { margin: 0; }
+    a { color: inherit; text-decoration: none; }
+    .masthead { border-bottom: 1.5pt solid #183e56; padding-bottom: 7pt; margin-bottom: 10pt; }
+    .name { display: flex; align-items: baseline; gap: 10pt; }
+    h1 { font-size: 26pt; line-height: 1.15; color: #183e56; letter-spacing: -.5pt; }
+    .english { color: #64748b; font-size: 10pt; }
+    .role { margin-top: 4pt; color: #176778; font-size: 12pt; font-weight: 600; }
+    .links { margin-top: 6pt; display: flex; gap: 11pt; font-size: 8.5pt; color: #476078; }
+    h2 { font-size: 11pt; color: #183e56; padding-bottom: 3pt; border-bottom: .5pt solid #b9c8d2; margin: 10pt 0 5pt; }
+    h3 { font-size: 10.5pt; font-weight: 700; }
+    h4 { font-size: 9.7pt; color: #176778; font-weight: 600; margin-top: 5pt; }
+    .entry { display: flex; justify-content: space-between; align-items: baseline; gap: 10pt; margin-top: 8pt; }
+    .entry:first-child { margin-top: 0; }
+    .period { color: #64748b; white-space: nowrap; font-size: 8.5pt; font-weight: 400; }
+    .company-role { color: #526579; font-size: 9pt; margin-bottom: 3pt; }
+    ul { padding-left: 11pt; margin-top: 2pt; }
+    li { padding-left: 1pt; margin-bottom: 2.5pt; }
+    li::marker { color: #49768a; font-size: 8pt; }
+    .skills p { margin-bottom: 2pt; }
+    .skills strong { display: inline-block; width: 67pt; font-weight: 600; color: #183e56; }
+    .continuation { display: flex; justify-content: space-between; border-bottom: 1pt solid #183e56; padding-bottom: 6pt; margin-bottom: 9pt; font-size: 9pt; color: #526579; }
+    .continuation strong { color: #183e56; font-weight: 600; }
+    .compact p { margin-top: 2pt; }
+    .education { display: grid; grid-template-columns: 1fr auto; gap: 3pt 10pt; }
+    footer { position: absolute; left: 16mm; right: 16mm; bottom: 9mm; display: flex; justify-content: space-between; padding-top: 5pt; border-top: .5pt solid #dbe2e8; color: #64748b; font-size: 7.5pt; }
+  </style>
+</head>
+<body>
+  <section class="sheet" aria-label="이력서 1쪽">
+    <div class="content">
+      <header class="masthead">
+        <div class="name"><h1>지예환</h1><span class="english">Ewan Jee</span></div>
+        <p class="role">Back-end Engineer</p>
+        <div class="links">
+          <a href="mailto:ewancareer@gmail.com">ewancareer@gmail.com</a>
+          <a href="https://ewanjee.com">ewanjee.com</a>
+          <a href="https://github.com/EwanJee">github.com/EwanJee</a>
+          <a href="https://ewanjee.tistory.com">ewanjee.tistory.com</a>
+          <a href="https://www.linkedin.com/in/%EC%98%88%ED%99%98-%EC%A7%80-191854242">LinkedIn</a>
+        </div>
+      </header>
+
+      <h2>소개</h2>
+      <p>무신사에서 주문·배송·클레임을 담당하는 Java·Kotlin 백엔드 엔지니어입니다. 운영자가 개발과 배포 없이 혜택을 편성하는 시스템을 만들고, API Gateway 단계 전환과 데이터·배치 시스템을 설계·운영했습니다. 요구사항과 판단 근거를 문서·API 계약·테스트로 남기고, 반복되는 구현과 검증은 AI 도구로 자동화합니다.</p>
+
+      <h2>기술</h2>
+      <div class="skills">
+        <p><strong>Backend</strong>Java, Kotlin, Spring Boot, Spring Batch, JPA, Kotlin JDSL, REST API</p>
+        <p><strong>Data</strong>MySQL, Redis, Kafka, RabbitMQ, Databricks, SQL, Python</p>
+        <p><strong>Platform</strong>AWS, API Gateway, Kubernetes, GitHub Actions, Datadog, Grafana</p>
+      </div>
+
+      <h2>경력</h2>
+      <!-- 경력·수치 근거: src/data/career.ts, src/content/projects/ko/first-payment-restore.mdx, settlement-ledger-dedup.mdx, benefit-home.mdx, api-gateway-transition.mdx, alerting.mdx -->
+      <div class="entry" data-evidence="E-career-join"><h3>무신사 MUSINSA</h3><span class="period">2026.03 - 현재</span></div>
+      <p class="company-role">Product Engineer</p>
+
+      <div class="entry" data-evidence="E-career-purchase"><h3>무신사: Purchase 팀</h3><span class="period">2026.09 - 현재</span></div>
+      <h4>클레임: 첫 결제 혜택 자격 복원</h4>
+      <ul>
+        <li data-evidence="E-restore">판매자 귀책으로 주문이 전부 취소된 고객의 첫 결제 혜택 자격 복원을 상위 설계(HLD) 1건과 상세 설계(LLD) 2건으로 구체화하고, 외부 API 연동 검증까지 개발.</li>
+        <li>이벤트 전송 기록을 주문 변경과 함께 저장하는 아웃박스, 중복 방지 키, 고객 단위 잠금과 상태 전이로 중복 요청을 제어. 외부 API 연동을 검증했으며, 환불 이벤트 연결은 정책 확정 뒤 적용하도록 분리.</li>
+      </ul>
+      <h4>정산 원장 중복 삽입 원인 분석과 해결안 제안</h4>
+      <ul>
+        <li data-evidence="E-ledger-cause E-ledger-research">4일 치 로그에서 두 서비스가 서로 다른 잠금으로 같은 행을 넣는 경합을 확인하고, 커밋 전에 이벤트를 보내는 경로도 특정.</li>
+        <li data-evidence="E-ledger-matrix">대안 7개를 가중 결정표로 비교해 값 통일 후 원장 유니크 키로 중복을 차단하는 안을 아키텍처 결정 기록(ADR)으로 제안. 가중치를 5%p씩 바꾼 141가지 조합에서도 1위 유지 확인.</li>
+      </ul>
+
+      <div class="entry" data-evidence="E-career-retention"><h3>무신사: Retention 팀</h3><span class="period">2026.06 - 2026.09</span></div>
+      <h4>혜택홈 새 판 서버와 편성 어드민 설계·개발</h4>
+      <ul>
+        <li data-evidence="E-bh-sdui">13개 화면 영역을 API 한 번으로 제공하는 서버 주도 화면 구성(SDUI) 계약 설계. 캐러셀 3개는 렌더러를 재사용하고 미션 4개는 계약 1종으로 통합해 새 분기 3개 축소.</li>
+        <li data-evidence="E-bh-admin E-bh-total">운영자가 카드·광고 순서, 노출 기간, 변경 이력을 직접 관리하는 어드민을 계획보다 13영업일 앞당겨 오픈. 기능 스위치 14개로 서버 배포와 사용자 공개를 분리.</li>
+        <li data-evidence="E-bh-traffic E-bh-p99">9월 17-27일 관측에서 하루 약 10만 번 열리는 화면의 p99(요청 99%의 응답시간 상한) 약 0.25초, 서버 오류 0건 확인. 첫 이틀은 p99 약 0.4초.</li>
+        <li data-evidence="E-bh-docs E-bh-research E-bh-qabot">전시·콘텐츠 책임과 캐시 소유 경계를 ADR로 정하고 설계 위키 19건, 인수인계 점검 9항목을 충족한 문서 작성. Android·iOS·웹뷰 검사와 오류 티켓 생성을 QA 봇으로 자동화.</li>
+      </ul>
+      <h4>API Gateway 전환과 운영 안정성</h4>
+      <ul>
+        <li data-evidence="E-gw-transition E-gw-research">공개 API 23개·라우트 규칙 26개를 7일간 10%, 30%, 70%, 100%로 단계 전환. 경로 간 응답 불일치 4건 제거, 100% 구간 약 1,600만 요청 중 서버 오류 1건 확인.</li>
+        <li data-evidence="E-gw-502 E-gw-scaledown">70% 단계의 서버 증설 때 발생한 502 오류 약 800건을 준비 전 트래픽 유입으로 특정. 앱·nginx 준비 확인과 메모리 조정 후 전환을 마치고 개발·알파·운영의 예전 외부 파드를 0개로 축소.</li>
+        <li data-evidence="E-gw-research E-alert-channels E-alert-rules">Grafana 대시보드 2개(52패널)와 되돌리기 절차로 전환을 검증. 알림 채널 17개를 역할별 5개로 모으고 규칙 36개를 심각도 3단계로 정비.</li>
+      </ul>
+    </div>
+    <footer><span>EWAN JEE · BACK-END ENGINEER</span><span>2026.10 · 1 / 2</span></footer>
+  </section>
+
+  <section class="sheet" aria-label="이력서 2쪽">
+    <div class="content">
+      <header class="continuation"><strong>지예환 · Back-end Engineer</strong><a href="https://ewanjee.com">ewanjee.com</a></header>
+      <!-- 근거: src/content/projects/ko/tokyo-popup-chatbot.mdx, japan-retention-mvp.mdx와 사용자 제공 이력서 -->
+      <div class="entry" data-evidence="E-career-global"><h3>무신사: Global 팀</h3><span class="period">2026.03 - 2026.06</span></div>
+      <h4>도쿄 팝업 다국어 안내 챗봇</h4>
+      <ul>
+        <li data-evidence="E-chatbot-scale E-chatbot-users E-chatbot-reuse">78개 브랜드·5개 층을 3개 언어로 안내하는 챗봇을 2주 안에 설계·구현·검증. 배포 자동화와 이용 지표 수집을 구축해 인계하고, 17일간 약 5천 명 사용. 이후 하라주쿠 팝업에 재활용.</li>
+      </ul>
+      <h4>일본 코호트 리텐션 MVP · 글로벌 이상 징후 탐색 자동화</h4>
+      <ul>
+        <li data-evidence="E-jp-research">요구사항 후보 12개를 영향도·비용·기존 분석과의 중복으로 비교해 재구매 곡선·카테고리 재구매율·이상 신호·7일 활성화 하락·두 번째 구매 지연의 5개 지표로 최소 기능 범위(MVP)를 확정. <span data-evidence="E-jp-scope">테이블 8개를 뷰 3개·이벤트 테이블 1개로 줄여 출시.</span></li>
+        <li data-evidence="E-resume-sql E-jp-contracts">진단 SQL 17개와 실제 데이터·설계 문서를 대조해 데이터 계약 8개 중 7개 오류를 배포 전에 수정. 국가 조인, 결제 완료 필터, 재구매 판정식과 분모 편향을 교정.</li>
+        <li data-evidence="E-jp-alert">계절성을 반영한 이상 탐지와 국가·코호트별 주 1건 알림 제한을 구성. 수치·우선순위·원인 후보는 코드가 계산하고, 대규모 언어 모델(LLM)은 문장만 정리하도록 분리. 사실 보존 검사 실패 시 코드 문구로 복귀.</li>
+      </ul>
+
+      <h2>AI 개발 자동화와 문서화</h2>
+      <!-- 근거: 사용자 제공 Ji_Yehwan_Back-end_Engineer_Updated.pdf 1쪽. 사내 도구 식별자는 제외. -->
+      <ul>
+        <li data-evidence="E-resume-automation">기능 스위치 정리를 Java·Kotlin 공용 AI 작업 흐름으로 제작. 코드·운영 설정·변경 이력을 대조해 모든 운영 조건에서 꺼진 채 30일 이상 바뀌지 않은 항목만 후보로 보고하고, 수동 실행에서 정리 PR을 생성하도록 분리.</li>
+        <li data-evidence="E-resume-automation">티켓 정리, 역할 분배, 구현·테스트, 교차 검증을 잇는 개발 흐름과 야간 조사·설계 문서 등 AI 플러그인 7개를 사내에 공유. 에이전트 호출 한도 초과 시 무한 대기하던 문제를 확인 횟수 제한과 실패 신호 전파로 수정.</li>
+      </ul>
+
+      <h2>이전 경력</h2>
+      <div class="entry" data-evidence="E-career-intern"><h3>아이헤이트플라잉버그스: R&amp;D</h3><span class="period">2024.06 - 2024.09</span></div>
+      <ul>
+        <li data-evidence="E-aidt">Java·Python·SQL로 AI 디지털교과서 추천 학습 API, 데이터 삽입 API·스크립트와 Appsmith 관리 도구 개발. 콘텐츠 담당자의 직접 데이터 관리를 지원하고 1차 검증 통과·정부 공급사 선정에 기여.</li>
+      </ul>
+      <div class="entry" data-evidence="E-career-intern"><h3>프레디저: 백엔드</h3><span class="period">2023.06 - 2023.08</span></div>
+      <ul>
+        <li>심리 진단 결과 API와 카카오 로그인·결제 연동 구현. OAuth2 인증, Redis 캐시, AWS CloudWatch 관측 구성.</li>
+      </ul>
+
+      <h2>개인·팀 프로젝트</h2>
+      <!-- 근거: src/data/personal-projects.ts. 일정타그램·활동·기술 글쓰기는 사용자 제공 이력서 2쪽. -->
+      <div class="entry" data-evidence="E-resume-projects"><h3><a href="https://github.com/twelevegg">CS Navigator</a></h3><span class="period">2026.01 - 2026.02 · 부트캠프 팀 프로젝트</span></div>
+      <ul>
+        <li data-evidence="E-resume-projects">상담사 실시간 멘트 추천·교육 AI 플랫폼의 Spring Boot 백엔드 담당(커밋 약 70%). 상담·녹취·AI 분석 결과·운영 지표 API 개발, FastAPI 실시간 AI 서버에도 참여.</li>
+      </ul>
+      <div class="entry" data-evidence="E-resume-projects"><h3><a href="https://github.com/EwanJee/NEWJOB-Ver2.0">Remember Assessment</a></h3><span class="period">2025 · 개인 프로젝트</span></div>
+      <ul>
+        <li>긴 PDF 리포트 생성을 RabbitMQ 비동기 작업으로 분리하고 서버 전송 이벤트(SSE)로 진행 상태 전달. Spring Security 인증, Kotlin JDSL 조회와 Redis 상태 저장 구성.</li>
+      </ul>
+      <div class="entry" data-evidence="E-resume-projects"><h3><a href="https://github.com/EwanJee/HealthWebApp">My Health Check</a></h3><span class="period">2024.10 - 2025.02 · 개인 프로젝트</span></div>
+      <ul>
+        <li>공공데이터 API 기반 체력 진단·맞춤 운동·시설 위치 서비스 개발. WebFlux·Coroutine 병렬 호출, Flyway 데이터베이스 변경 관리와 GitHub Actions 배포 구성.</li>
+      </ul>
+      <p class="compact" data-evidence="E-resume-projects">일정타그램 (2024.02 - 2024.05): 6인 팀에서 Spring Boot 댓글 API·WebSocket 실시간 채팅 구현.</p>
+
+      <h2>학력·자격</h2>
+      <div class="education" data-evidence="E-edu">
+        <span>Rutgers University-New Brunswick · Computer Science 졸업</span><span class="period">2022.08 - 2025.01</span>
+        <span>Stony Brook University · Computer Science</span><span class="period">2019.08 - 2020.12</span>
+        <span>정보처리기사 · 한국산업인력공단</span><span class="period">2024</span>
+      </div>
+      <h2>활동·기술 글쓰기</h2>
+      <div class="compact" data-evidence="E-resume-activities">
+        <p>LG Aimers 4기: B2B 영업 기회 예측 모델 학습 · 코멘토: Django 쇼핑몰 개발 (2024.01 - 2024.02)</p>
+        <p><a href="https://ewanjee.tistory.com">ewanjee.tistory.com</a> · 기능 스위치, 아웃박스, AI 개발 도구와 검증 방법에 관한 기술 글 작성.</p>
+      </div>
+    </div>
+    <footer><span>EWAN JEE · BACK-END ENGINEER</span><span>2026.10 · 2 / 2</span></footer>
+  </section>
+</body>
+</html>

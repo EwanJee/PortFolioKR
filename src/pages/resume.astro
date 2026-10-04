@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import { resume } from '../data/resume';
+---
+{/* PDF 뷰어는 본문 교체 대신 브라우저의 일반 문서 로딩으로 초기화한다. 뒤로 가기로 돌아올 때도 같은 방식으로 연다. */}
+<BaseLayout title="Resume | 지예환" description={resume.description} ogImage="/open-graph/resume.png" clientRouter={false}>
+  <SectionLabel text="RESUME" level={1} />
+  <div class="resume-toolbar">
+    <div class="resume-actions">
+      <a class="resume-open" href={resume.pdf} target="_blank" rel="noopener noreferrer" data-astro-reload>새 창에서 보기 <span aria-hidden="true">↗</span></a>
+      <a class="resume-download" href={resume.pdf} download data-astro-reload>PDF 다운로드 <span aria-hidden="true">↓</span></a>
+    </div>
+  </div>
+  <object class="resume-viewer" data={`${resume.pdf}#view=FitH`} type="application/pdf" aria-label="지예환 이력서 PDF 미리보기">
+    <div class="resume-fallback">
+      <p>이 브라우저에서는 PDF 미리보기를 지원하지 않습니다.</p>
+      <a href={resume.pdf} target="_blank" rel="noopener noreferrer" data-astro-reload>이력서 PDF 열기</a>
+    </div>
+  </object>
+</BaseLayout>
+
+<style>
+  .resume-toolbar { display: flex; justify-content: flex-end; margin-bottom: 24px; }
+  .resume-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .resume-actions a { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 8px 16px; border: 1px solid var(--accent-dark); border-radius: 4px; text-decoration: none; font-size: 14px; }
+  .resume-open:hover { background: var(--panel); }
+  .resume-download { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .resume-download:hover { filter: brightness(1.1); }
+  .resume-viewer { display: block; width: 100%; height: 82vh; min-height: 640px; max-height: 1100px; border: 1px solid rgba(255, 255, 255, .15); border-radius: 4px; background: var(--panel); }
+  .resume-fallback { padding: 28px; color: var(--text-muted); }
+  .resume-fallback a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent); }
+  @media (max-width: 720px) {
+    .resume-toolbar { justify-content: flex-start; }
+    .resume-viewer { height: 75svh; min-height: 480px; }
+  }
+</style>

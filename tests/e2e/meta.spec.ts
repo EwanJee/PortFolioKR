@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const ROUTES = ['/', '/about/', '/career/', '/projects/', '/troubleshooting/', '/contact/', '/projects/benefit-home/', '/projects/settlement-ledger-dedup/'];
+const ROUTES = ['/', '/about/', '/career/', '/resume/', '/projects/', '/troubleshooting/', '/contact/', '/projects/benefit-home/', '/projects/settlement-ledger-dedup/'];
 
 for (const route of ROUTES) {
   test(`${route}: 미리보기 이미지가 실제로 있다`, async ({ page, request }) => {
