@@ -21,6 +21,7 @@ const TYPES = {
   '.woff2': 'font/woff2',
   '.woff': 'font/woff',
   '.txt': 'text/plain',
+  '.pdf': 'application/pdf',
 };
 const GZIP = new Set(['.html', '.css', '.js', '.json', '.svg', '.txt']);
 

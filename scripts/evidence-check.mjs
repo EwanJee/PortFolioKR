@@ -30,7 +30,7 @@ function* files(dir, exts) {
 export function findMissing(dirs, known) {
   const missing = [];
   for (const dir of dirs) {
-    for (const file of files(dir, ['.mdx', '.ts'])) {
+    for (const file of files(dir, ['.mdx', '.ts', '.html'])) {
       for (const id of extractEvidenceIds(readFileSync(file, 'utf8'))) {
         if (!known.has(id)) missing.push(`${file}: ${id}`);
       }
@@ -47,7 +47,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     process.exit(0);
   }
   const known = extractKnownIds(readFileSync(file, 'utf8'));
-  const missing = findMissing(['src/content', 'src/data', 'src/lib'], known);
+  const missing = findMissing(['src/content', 'src/data', 'src/lib', 'src/documents'], known);
   for (const m of missing) console.log(`MISSING ${m}`);
   if (missing.length > 0) {
     console.log(`evidence-check: ${missing.length}건`);

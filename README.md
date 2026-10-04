@@ -18,6 +18,15 @@
 - `docs/superpowers/specs/`
 - `docs/superpowers/plans/`
 
+## 이력서
+
+- `/resume/`에서 PDF를 미리 보고 새 창으로 열거나 내려받을 수 있다.
+- Resume은 PDF 뷰어가 매번 초기화되도록 일반 페이지 이동을 사용한다. 나머지 페이지 사이에서는 본문만 교체하는 화면 전환을 유지한다.
+- 내용과 인쇄용 서식은 `src/documents/resume.html`, PDF 경로와 페이지 설명은 `src/data/resume.ts`에서 관리한다. 경력과 수치는 `src/data`와 `src/content/projects`를 기준으로 갱신한다.
+- `npm run resume:build`로 설치된 Chrome과 저장소의 Pretendard 글꼴을 사용해 PDF를 만든다. 공개 전 문자열, 글꼴 로딩, 용지 넘침과 꼬리말 겹침을 검사한다.
+- 결과는 `public/resume/Ji_Yehwan_Back-end_Engineer.pdf`와 `output/pdf/`에 저장된다. 배포하는 PDF는 `public/resume/` 파일이며 사이트 빌드에 그대로 포함된다.
+- 갱신 후 PDF 두 쪽을 눈으로 확인하고 `npm run verify`, `npm run test:e2e`를 실행한다.
+
 ## 화면 효과와 미디어
 
 - 홈의 타이핑과 경력 숫자는 브라우저 기본 요소로 동작한다. 필터·그림·결정표·이미지 재생은 React를 쓴다.

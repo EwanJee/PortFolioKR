@@ -16,13 +16,14 @@ interface Props {
   variant?: 'hero' | 'bar';
   // 본문이 나타나는 움직임. 사례 페이지는 자리 이동 없이 투명도만 바꾼다(윗부분 이미지를 제자리에서 그려야 GIF가 가장 큰 요소로 바뀌지 않는다).
   motion?: 'rise' | 'fade';
+  clientRouter?: boolean;
 }
 
-const { title, description, ogImage = '/open-graph/index.png', variant = 'bar', motion = 'rise' } = Astro.props;
+const { title, description, ogImage = '/open-graph/index.png', variant = 'bar', motion = 'rise', clientRouter = true } = Astro.props;
 ---
 <html lang="ko">
   <head>
-    <BaseHead title={title} description={description} ogImage={ogImage} />
+    <BaseHead title={title} description={description} ogImage={ogImage} clientRouter={clientRouter} />
   </head>
   <body>
     <a class="skip-link" href="#main">본문으로 건너뛰기</a>

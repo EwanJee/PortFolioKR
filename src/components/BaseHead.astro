@@ -5,9 +5,10 @@ interface Props {
   title: string;
   description: string;
   ogImage: string;
+  clientRouter?: boolean;
 }
 
-const { title, description, ogImage } = Astro.props;
+const { title, description, ogImage, clientRouter = true } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogUrl = new URL(ogImage, Astro.site);
 ---
@@ -58,4 +59,4 @@ const ogUrl = new URL(ogImage, Astro.site);
   import '../scripts/navigation';
 </script>
 {/* 화면 전환 효과 지원 여부와 관계없이 문서·방문 기록을 즉시 교체한다. */}
-<ClientRouter fallback="swap" />
+{clientRouter && <ClientRouter fallback="swap" />}

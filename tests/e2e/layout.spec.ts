@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/test';
 
-const ROUTES = ['/', '/about/', '/career/', '/projects/', '/troubleshooting/', '/contact/', '/404.html'];
+const ROUTES = ['/', '/about/', '/career/', '/resume/', '/projects/', '/troubleshooting/', '/contact/', '/404.html'];
 
-test('첫 화면: 이름, 한 줄 소개, 메뉴 6개, 소셜 4개, 일하는 방식', async ({ page }) => {
+test('첫 화면: 이름, 한 줄 소개, 메뉴 7개, 소셜 4개, 일하는 방식', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('h1')).toContainText('지예환');
   await expect(page.getByText('무신사에서 주문, 배송, 클레임 도메인을 담당합니다.')).toBeVisible();
-  await expect(page.locator('nav[aria-label="주 메뉴"] a')).toHaveCount(6);
+  await expect(page.locator('nav[aria-label="주 메뉴"] a')).toHaveCount(7);
   const social = page.locator('.social a');
   await expect(social).toHaveCount(4);
   await expect(page.locator('.social a[aria-label="GitHub"]')).toHaveAttribute('target', '_blank');
@@ -150,6 +150,7 @@ test('모바일: 메뉴, 탭, 버튼, 링크는 누르기 쉬운 크기다', asy
     ['/career/', '.tl-body h2 a', 44],
     ['/troubleshooting/', '.trouble-related a', 44],
     ['/contact/', '.contact-list a', 44],
+    ['/resume/', '.resume-actions a', 44],
     ['/projects/benefit-home/', '.case-link', 44],
     ['/about/', '.bar-name', 44],
   ];

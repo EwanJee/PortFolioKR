@@ -25,4 +25,10 @@ describe('findMissing', () => {
     writeFileSync(join(dir, 'content', 'x.mdx'), 'evidence: [E-a, E-zz]');
     expect(findMissing([join(dir, 'content')], new Set(['E-a']))).toEqual([`${join(dir, 'content', 'x.mdx')}: E-zz`]);
   });
+  it('PDF 원본 HTML의 근거도 검사한다', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'ev-resume-'));
+    const file = join(dir, 'resume.html');
+    writeFileSync(file, '<li data-evidence="E-known E-missing">실적</li>');
+    expect(findMissing([dir], new Set(['E-known']))).toEqual([`${file}: E-missing`]);
+  });
 });
